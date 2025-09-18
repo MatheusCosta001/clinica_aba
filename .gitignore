@@ -1,0 +1,12 @@
+# Virtual environment
+venv/
+
+# Byte-compiled / Python cache
+__pycache__/
+*.pyc
+
+# Migrations
+migrations/
+
+# Arquivos do sistema
+.DS_Store
