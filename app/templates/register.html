@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Registrar Usuário</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label>Nome</label>
+        <input type="text" name="nome" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Email</label>
+        <input type="email" name="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Senha</label>
+        <input type="password" name="senha" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Tipo</label>
+        <select name="tipo" class="form-control" required>
+            <option value="ADM">ADM</option>
+            <option value="Coordenador">Coordenador</option>
+            <option value="Profissional">Profissional</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Registrar</button>
+</form>
+{% endblock %}

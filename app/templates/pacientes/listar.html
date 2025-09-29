@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Pacientes</h2>
+<a href="{{ url_for('pacientes.novo') }}" class="btn btn-success mb-3">Novo Paciente</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Idade</th>
+            <th>Data Nascimento</th>
+            <th>Diagnóstico</th>
+            <th>Responsável</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in pacientes %}
+        <tr>
+            <td>{{ p.nome }}</td>
+            <td>{{ p.idade }}</td>
+            <td>{{ p.data_nascimento }}</td>
+            <td>{{ p.diagnostico }}</td>
+            <td>{{ p.responsavel }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

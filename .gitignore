@@ -10,3 +10,8 @@ migrations/
 
 # Arquivos do sistema
 .DS_Store
+
+# Configurações locais
+instance/
+
+.env
