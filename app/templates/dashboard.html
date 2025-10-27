@@ -1,10 +1,18 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
 {% block content %}
 <h3>Dashboard</h3>
-<p>Olá, {{ current_user.nome }} ({{ current_user.tipo }})</p>
+<p>Bem-vindo, {{ user_nome }}. Papel: {{ papel }}</p>
+
 <div class="row">
   <div class="col-md-4">
-    <div class="card p-3">Pacientes: <a href="{{ url_for('pacientes.listar') }}">Ver lista</a></div>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Pacientes</h5>
+        <p class="card-text">Gerencie pacients</p>
+        <a href="{{ url_for('pacientes.index') }}" class="btn btn-primary">Abrir</a>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

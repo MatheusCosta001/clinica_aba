@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Nova Evolução - {{ paciente.nome }}{% endblock %}
+{% block content %}
+<h3>Nova anotação para {{ paciente.nome }}</h3>
+<form method="post">
+  <div class="mb-3">
+    <label>Área</label>
+    <select name="area" class="form-select">
+      <option value="psicologia">Psicologia</option>
+      <option value="fonoaudiologia">Fonoaudiologia</option>
+      <option value="terapia_ocupacional">Terapia Ocupacional</option>
+      <option value="psicomotricidade">Psicomotricidade</option>
+      <option value="psicopedagogia">Psicopedagogia</option>
+      <option value="aplicadora_aba">Aplicadora ABA</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label>Anotação</label>
+    <textarea name="anotacao" class="form-control" rows="6" required></textarea>
+  </div>
+  <button class="btn btn-primary">Salvar</button>
+  <a class="btn btn-secondary" href="{{ url_for('evolucoes.timeline', paciente_id=paciente.id) }}">Voltar</a>
+</form>
+{% endblock %}

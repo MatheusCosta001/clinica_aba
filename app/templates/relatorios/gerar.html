@@ -1,13 +1,25 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% block title %}Gerar Relatório - {{ paciente.nome }}{% endblock %}
 {% block content %}
-<h3>Gerar Relatório — {{ paciente.nome }}</h3>
-<form method="POST">
-  <p>Incluir anotações por tipo (marque se quiser):</p>
+<h3>Gerar relatório para {{ paciente.nome }}</h3>
+<form method="post">
   <div class="mb-3">
-    <input type="checkbox" name="incluir" value="profissional"> Profissionais (todos)<br>
-    <input type="checkbox" name="incluir" value="coordenador"> Coordenadora<br>
-    <input type="checkbox" name="incluir" value="adm"> ADM<br>
+    <label>Incluir anotações das áreas (se nada selecionado => todas)</label>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="areas" value="psicologia" id="a1">
+      <label class="form-check-label" for="a1">Psicologia</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="areas" value="fonoaudiologia" id="a2">
+      <label class="form-check-label" for="a2">Fonoaudiologia</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="areas" value="terapia_ocupacional" id="a3">
+      <label class="form-check-label" for="a3">Terapia Ocupacional</label>
+    </div>
+    <!-- adicione mais conforme necessário -->
   </div>
-  <button class="btn btn-success">Gerar PDF</button>
+  <button class="btn btn-primary">Gerar PDF</button>
+  <a class="btn btn-secondary" href="{{ url_for('pacientes.index') }}">Voltar</a>
 </form>
 {% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Pacientes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+  <h3>Pacientes</h3>
+  <a class="btn btn-success" href="{{ url_for('pacientes.novo') }}">Novo Paciente</a>
+</div>
+<table class="table table-striped mt-3">
+  <thead>
+    <tr><th>Nome</th><th>Idade</th><th>Diagnóstico</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    {% for p in pacientes %}
+    <tr>
+      <td>{{ p.nome }}</td>
+      <td>{{ p.idade or '' }}</td>
+      <td>{{ p.diagnostico or '' }}</td>
+      <td>
+        <a class="btn btn-sm btn-primary" href="{{ url_for('evolucoes.timeline', paciente_id=p.id) }}">Evoluções</a>
+        <a class="btn btn-sm btn-warning" href="{{ url_for('pacientes.editar', paciente_id=p.id) }}">Editar</a>
+        <form method="post" action="{{ url_for('pacientes.deletar', paciente_id=p.id) }}" style="display:inline">
+          <button class="btn btn-sm btn-danger" onclick="return confirm('Deletar?')">Deletar</button>
+        </form>
+        <a class="btn btn-sm btn-secondary" href="{{ url_for('relatorios.gerar', paciente_id=p.id) }}">Relatório</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
