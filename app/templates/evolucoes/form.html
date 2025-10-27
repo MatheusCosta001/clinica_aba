@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Nova anotação — {{ paciente.nome }}</h3>
+<form method="POST">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">{{ form.anotacao.label }} {{ form.anotacao(class='form-control', rows=5) }}</div>
+  {{ form.submit(class='btn btn-primary') }}
+</form>
+{% endblock %}

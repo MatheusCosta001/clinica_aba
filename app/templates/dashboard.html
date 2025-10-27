@@ -1,6 +1,10 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2>Bem-vindo, {{ usuario.nome }}!</h2>
-<p>Seu tipo de acesso: {{ usuario.tipo }}</p>
-<a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Sair</a>
+<h3>Dashboard</h3>
+<p>Olá, {{ current_user.nome }} ({{ current_user.tipo }})</p>
+<div class="row">
+  <div class="col-md-4">
+    <div class="card p-3">Pacientes: <a href="{{ url_for('pacientes.listar') }}">Ver lista</a></div>
+  </div>
+</div>
 {% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Gerar Relatório — {{ paciente.nome }}</h3>
+<form method="POST">
+  <p>Incluir anotações por tipo (marque se quiser):</p>
+  <div class="mb-3">
+    <input type="checkbox" name="incluir" value="profissional"> Profissionais (todos)<br>
+    <input type="checkbox" name="incluir" value="coordenador"> Coordenadora<br>
+    <input type="checkbox" name="incluir" value="adm"> ADM<br>
+  </div>
+  <button class="btn btn-success">Gerar PDF</button>
+</form>
+{% endblock %}

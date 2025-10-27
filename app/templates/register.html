@@ -1,27 +1,21 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2>Registrar Usuário</h2>
-<form method="POST">
-    <div class="mb-3">
-        <label>Nome</label>
-        <input type="text" name="nome" class="form-control" required>
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-body">
+        <h4>Registrar</h4>
+        <form method="POST">
+          {{ form.hidden_tag() }}
+          <div class="mb-3">{{ form.nome.label }} {{ form.nome(class='form-control') }}</div>
+          <div class="mb-3">{{ form.email.label }} {{ form.email(class='form-control') }}</div>
+          <div class="mb-3">{{ form.senha.label }} {{ form.senha(class='form-control') }}</div>
+          <div class="mb-3">{{ form.confirmar.label }} {{ form.confirmar(class='form-control') }}</div>
+          <div class="mb-3">{{ form.tipo.label }} {{ form.tipo(class='form-select') }}</div>
+          {{ form.submit(class='btn btn-success') }}
+        </form>
+      </div>
     </div>
-    <div class="mb-3">
-        <label>Email</label>
-        <input type="email" name="email" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Senha</label>
-        <input type="password" name="senha" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Tipo</label>
-        <select name="tipo" class="form-control" required>
-            <option value="ADM">ADM</option>
-            <option value="Coordenador">Coordenador</option>
-            <option value="Profissional">Profissional</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-success">Registrar</button>
-</form>
+  </div>
+</div>
 {% endblock %}

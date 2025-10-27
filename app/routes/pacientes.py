@@ -1,36 +1,55 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_required
-from app import db
-from app.models import Paciente
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask_login import login_required, current_user
+from app.models import Paciente, db
+from app.forms import PacienteForm
 
-pacientes_bp = Blueprint("pacientes", __name__, url_prefix="/pacientes")
+bp = Blueprint('pacientes', __name__, url_prefix='/pacientes')
 
-@pacientes_bp.route("/")
+@bp.route('/')
 @login_required
 def listar():
-    pacientes = Paciente.query.all()
-    return render_template("pacientes/listar.html", pacientes=pacientes)
+    pacientes = Paciente.query.order_by(Paciente.nome.asc()).all()
+    return render_template('pacientes/listar.html', pacientes=pacientes)
 
-@pacientes_bp.route("/novo", methods=["GET", "POST"])
+@bp.route('/novo', methods=['GET','POST'])
 @login_required
 def novo():
-    if request.method == "POST":
-        nome = request.form.get("nome")
-        idade = request.form.get("idade")
-        data_nascimento = request.form.get("data_nascimento")
-        diagnostico = request.form.get("diagnostico")
-        responsavel = request.form.get("responsavel")
-
-        paciente = Paciente(
-            nome=nome,
-            idade=int(idade),
-            data_nascimento=data_nascimento,
-            diagnostico=diagnostico,
-            responsavel=responsavel
+    form = PacienteForm()
+    if form.validate_on_submit():
+        p = Paciente(
+            nome=form.nome.data,
+            data_nascimento=form.data_nascimento.data,
+            idade=form.idade.data,
+            diagnostico=form.diagnostico.data,
+            responsavel=form.responsavel.data
         )
-        db.session.add(paciente)
+        db.session.add(p)
         db.session.commit()
-        flash("Paciente cadastrado com sucesso!", "success")
-        return redirect(url_for("pacientes.listar"))
+        flash('Paciente criado', 'success')
+        return redirect(url_for('pacientes.listar'))
+    return render_template('pacientes/form.html', form=form, paciente=None)
 
-    return render_template("pacientes/form.html")
+@bp.route('/editar/<int:id>', methods=['GET','POST'])
+@login_required
+def editar(id):
+    p = Paciente.query.get_or_404(id)
+    form = PacienteForm(obj=p)
+    if form.validate_on_submit():
+        form.populate_obj(p)
+        db.session.commit()
+        flash('Paciente atualizado', 'success')
+        return redirect(url_for('pacientes.listar'))
+    return render_template('pacientes/form.html', form=form, paciente=p)
+
+@bp.route('/excluir/<int:id>', methods=['POST'])
+@login_required
+def excluir(id):
+    p = Paciente.query.get_or_404(id)
+    # apenas adm/coordenador podem excluir pacientes
+    if current_user.tipo not in ('adm','coordenador'):
+        flash('Permissão negada', 'danger')
+        return redirect(url_for('pacientes.listar'))
+    db.session.delete(p)
+    db.session.commit()
+    flash('Paciente excluído', 'success')
+    return redirect(url_for('pacientes.listar'))

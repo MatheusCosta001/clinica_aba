@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Evoluções de {{ paciente.nome }}</h3>
+<a href="{{ url_for('evolucoes.nova', paciente_id=paciente.id) }}" class="btn btn-primary mb-3">Nova Anotação</a>
+<ul class="list-group">
+  {% for e in evolucoes %}
+    <li class="list-group-item">
+      <strong>{{ e.autor.nome if e.autor else e.usuario_id }}</strong>
+      <small class="text-muted"> - {{ e.data_hora.strftime('%Y-%m-%d %H:%M') }}</small>
+      <p>{{ e.anotacao }}</p>
+      <form method="POST" action="{{ url_for('evolucoes.excluir', id=e.id) }}">
+        <button class="btn btn-sm btn-danger" onclick="return confirm('Excluir anotação?')">Excluir</button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock %}

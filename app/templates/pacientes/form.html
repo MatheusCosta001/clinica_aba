@@ -1,27 +1,13 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2>Novo Paciente</h2>
+<h3>{{ paciente and 'Editar' or 'Novo' }} Paciente</h3>
 <form method="POST">
-    <div class="mb-3">
-        <label>Nome</label>
-        <input type="text" name="nome" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Idade</label>
-        <input type="number" name="idade" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Data de Nascimento</label>
-        <input type="date" name="data_nascimento" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Diagnóstico</label>
-        <input type="text" name="diagnostico" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Responsável</label>
-        <input type="text" name="responsavel" class="form-control" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Salvar</button>
+  {{ form.hidden_tag() }}
+  <div class="mb-3">{{ form.nome.label }} {{ form.nome(class='form-control') }}</div>
+  <div class="mb-3">{{ form.data_nascimento.label }} {{ form.data_nascimento(class='form-control') }}</div>
+  <div class="mb-3">{{ form.idade.label }} {{ form.idade(class='form-control') }}</div>
+  <div class="mb-3">{{ form.diagnostico.label }} {{ form.diagnostico(class='form-control') }}</div>
+  <div class="mb-3">{{ form.responsavel.label }} {{ form.responsavel(class='form-control') }}</div>
+  {{ form.submit(class='btn btn-primary') }}
 </form>
 {% endblock %}
