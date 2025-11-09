@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Login - Clínica ABA{% endblock %}
+
+{% block content %}
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
+  <div class="row w-100 shadow-lg rounded-4 overflow-hidden" style="max-width: 1080px;">
+
+    <div class="col-md-6 bg-white p-5 d-flex flex-column justify-content-center">
+      <h3 class="mb-3 text-primary fw-semibold">Bem-vindo(a)</h3>
+      <p class="text-muted mb-4">Entre com sua conta para acessar o sistema</p>
+
+      <form method="POST" action="{{ url_for('auth.login') }}">
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input id="email" name="email" type="email" class="form-control form-control-lg" placeholder="seuemail@exemplo.com" required>
+        </div>
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha</label>
+          <input id="senha" name="senha" type="password" class="form-control form-control-lg" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Entrar</button>
+      </form>
+
+      <div class="text-center mt-3">
+        <small class="text-muted">Não tem conta?
+          <a href="{{ url_for('auth.register') }}" class="text-primary fw-semibold text-decoration-none">Cadastre-se</a>
+        </small>
+      </div>
+    </div>
+
+    <div class="col-md-6 d-flex align-items-center justify-content-center p-0"
+         style="background: linear-gradient(135deg, #e6f0ff 0%, #ffffff 100%); overflow: hidden;">
+      <img src="{{ url_for('static', filename='img/autismo.png') }}"
+           alt="Clínica ABA"
+           class="img-fluid"
+           style="width: 100%; height: auto; object-fit: cover; aspect-ratio: 3 / 2;">
+    </div>
+  </div>
+</div>
+{% endblock %}

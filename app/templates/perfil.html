@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Perfil de {{ user.nome }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Meu Perfil</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="card shadow-sm p-4 mx-auto" style="max-width: 600px;">
+        <div class="text-center mb-4">
+            <img 
+                src="{{ url_for('static', filename='img/profile_default.png') }}" 
+                alt="Foto de perfil" 
+                class="rounded-circle border" 
+                width="140" height="140"
+                style="object-fit: cover;"
+            >
+            <h4 class="mt-3">{{ user.nome }}</h4>
+            <p class="text-muted mb-0">{{ user.email }}</p>
+            <small class="text-secondary">{{ user.especialidade or 'Sem especialidade' }}</small>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.perfil') }}">
+            <div class="form-group mb-3">
+                <label>Nome:</label>
+                <input type="text" class="form-control" name="nome" value="{{ user.nome }}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Email:</label>
+                <input type="email" class="form-control" name="email" value="{{ user.email }}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Nova Senha (opcional):</label>
+                <input type="password" class="form-control" name="senha" placeholder="Deixe em branco para manter a atual">
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Especialidade:</label>
+                <input type="text" class="form-control" name="especialidade" value="{{ user.especialidade or '' }}">
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-primary">Salvar alterações</button>
+            </div>
+        </form>
+
+        <form method="POST" action="{{ url_for('auth.excluir_conta') }}" 
+              onsubmit="return confirm('Tem certeza que deseja excluir sua conta?');" 
+              class="mt-3 text-end">
+            <button type="submit" class="btn btn-danger">Excluir Conta</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
