@@ -1,0 +1,13 @@
+# Dependências principais
+Flask==3.1.2
+flask_sqlalchemy==3.1.1
+python-dotenv==1.2.1
+reportlab==4.4.4
+Werkzeug==3.1.3
+psycopg2-binary
+
+# Dependências de desenvolvimento e teste
+pytest==9.0.0
+coverage
+pytest-cov
+pytest-flask
