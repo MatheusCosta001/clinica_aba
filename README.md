@@ -148,10 +148,10 @@ O relatório será salvo em htmlcov/index.html.
 
 ## 👨‍💻 Autores
 
-Matheus Costa & Mariana de Freitas  
-💡 Projeto desenvolvido como MVP de TCC — Curso de Sistemas de Informação.  
-📂 GitHub: github.com/MatheusCosta001  
-📂 GitHub: github.com/marif28  
+Matheus Costa & Mariana de Freitas   
+💡 Projeto desenvolvido como MVP de TCC — Curso de Sistemas de Informação.     
+📂 GitHub: [github.com/MatheusCosta001](https://github.com/MatheusCosta001)  
+📂 GitHub: [github.com/marif28](https://github.com/marif28)  
 
 ---
 
