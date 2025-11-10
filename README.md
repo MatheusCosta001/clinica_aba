@@ -46,7 +46,6 @@ O sistema segue o padrão **MVC (Model-View-Controller)**, com camadas bem defin
 **Frontend**
 - HTML5, CSS3 e JavaScript  
 - Bootstrap 5  
-- Chart.js (gráficos interativos)  
 - Jinja2 (template engine do Flask)
 
 **Testes**
@@ -83,12 +82,12 @@ clinica_aba_versao_final/
 
 ## 📊 Funcionalidades Principais
 
-👥 Usuários	Cadastro, login e controle de acesso (Admin, Coordenador, Profissional)
-🧾 Pacientes	Cadastro, edição e visualização de prontuários
-🧠 Evoluções	Registro de atividades e progresso do paciente
-📄 Relatórios	Geração de relatórios em PDF com gráficos e informações detalhadas
-🔐 Autenticação	Sessões seguras com Flask-Login e utils de autenticação
-🧩 Testes	Testes automatizados para serviços e autenticação
+👥 Usuários	Cadastro, login e controle de acesso (Admin, Coordenador, Profissional)  
+🧾 Pacientes	Cadastro, edição e visualização de prontuários  
+🧠 Evoluções	Registro de atividades e progresso do paciente  
+📄 Relatórios	Geração de relatórios em PDF com gráficos e informações detalhadas  
+🔐 Autenticação	Sessões seguras com Flask-Login e utils de autenticação  
+🧩 Testes	Testes automatizados para serviços e autenticação  
 
 ---
 
