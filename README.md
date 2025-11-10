@@ -138,7 +138,6 @@ Acesse em: http://localhost:5000
 Para rodar os testes com relatório de cobertura:
 ```
 pytest --cov=app
-
 ```
 Gerar relatório HTML:
 ```
