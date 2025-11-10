@@ -113,14 +113,20 @@ source venv/bin/activate
 ```
 pip install -r requirements.txt
 ```
-4. Configurar o arquivo .env:
+4. Criar o banco de dados:  
+Abra o terminal do PostgreSQL (psql) e execute:
+```
+CREATE DATABASE clinica_aba;
+```
+5. Configurar o arquivo .env:  
+Crie um arquivo chamado .env na raiz do projeto e adicione as seguintes variáveis (ajuste conforme seu usuário e senha do PostgreSQL):
 ```
 FLASK_APP=app.py
 FLASK_ENV=development
 DATABASE_URL=postgresql://usuario:senha@localhost:5432/clinica_aba
 SECRET_KEY=sua_chave_secreta_aqui
 ```
-5. Executar o sistema
+6. Executar o sistema
 ```
 python app.py
 ```
