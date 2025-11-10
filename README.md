@@ -1,75 +1,93 @@
-# 🧩 Clínica ABA - Sistema de Gerenciamento
+# 🧩 Clínica ABA - Sistema Web de Gerenciamento
 
-**Clínica ABA - Sistema de Gerenciamento** é um sistema web desenvolvido para gerenciar o acompanhamento de pacientes em clínicas especializadas em Análise do Comportamento Aplicada (ABA). O projeto foi criado como **MVP de TCC**, com foco em funcionalidades essenciais para cadastro, registro de evoluções, geração de relatórios e visualização de prontuários.
+**Clínica ABA** é um sistema web desenvolvido para **gerenciar o acompanhamento de pacientes** em clínicas especializadas em **Análise do Comportamento Aplicada (ABA)**.  
+Este projeto foi criado como **MVP de TCC** do curso de **Sistemas de Informação**, com o objetivo de automatizar o registro, acompanhamento e geração de relatórios clínicos.
 
 ---
 
 ## 🎯 Objetivo do Projeto
 
-O sistema tem como objetivo principal oferecer uma **plataforma simples, intuitiva e eficiente** para:
+O sistema tem como propósito oferecer uma **plataforma prática, organizada e intuitiva** para:
 
-- Cadastro de pacientes, terapeutas e responsáveis  
-- Registro de evoluções (timeline de atividades e observações)  
-- Geração de relatórios automáticos em PDF com gráficos por domínio  
-- Prontuário unificado por paciente  
+- 📋 Cadastrar pacientes, profissionais e coordenadores  
+- 🧠 Registrar evoluções e observações dos atendimentos  
+- 📈 Gerar relatórios automáticos em **PDF**, com gráficos e estatísticas  
+- 🗂️ Manter um **prontuário digital unificado** para cada paciente  
+- 🔒 Controlar acessos conforme o tipo de usuário (Admin, Profissional, Coordenador)
 
-Este MVP **atende os requisitos da pesquisa e valida a automação do registro de dados e relatórios**, sem funcionalidades complexas como agendamento ou mobile.
+
+---
+
+## 🧱 Arquitetura do Projeto
+
+O sistema segue o padrão **MVC (Model-View-Controller)**, com camadas bem definidas:
+
+- **Models:** definição das entidades e estrutura do banco  
+- **Repository:** comunicação com o banco de dados  
+- **Services:** regras de negócio e processamento dos dados  
+- **Routes:** rotas e endpoints HTTP  
+- **Utils:** funções auxiliares (autenticação, geração de PDFs, etc.) 
 
 ---
 
 ## 🛠️ Stack Tecnológica
 
-**Backend:**  
+**Backend**
 - Python 3.11+  
 - Flask (microframework web)  
-- SQLAlchemy (ORM)  
+- Flask SQLAlchemy (ORM)  
 - Flask-Login (autenticação)  
-- Flask-Migrate (migrações do banco)  
+- python-dotenv (configurações via `.env`)  
+- ReportLab (geração de PDFs)
 
-**Banco de Dados:**  
-- PostgreSQL (local)  
+**Banco de Dados**
+- PostgreSQL (ambiente local)
 
-**Frontend:**  
-- HTML + CSS + JS  
-- Bootstrap 5 (estilização)  
-- Chart.js (gráficos interativos)  
-- Jinja2 (templates do Flask)  
+**Frontend**
+- HTML5, CSS3 e JavaScript  
+- Bootstrap 5  
+- Jinja2 (template engine do Flask)
 
-**Relatórios:**  
-- WeasyPrint (HTML → PDF)  
-- matplotlib (gráficos opcionais no backend)  
+**Testes**
+- Pytest  
+- Pytest-Flask  
+- Coverage e Pytest-Cov (relatórios de cobertura)
 
 ---
 
-## 📂 Estrutura do Projeto
-```
-clinica_aba/
-├── app.py # Entrada principal do Flask
-├── config.py # Configurações do Flask e do banco
-├── models.py # Models SQLAlchemy (User, Patient, Evolution)
-├── routes.py # Rotas/views do Flask
-├── requirements.txt # Dependências Python
-├── /templates/ # HTMLs renderizados com Jinja2
-│ ├── base.html
-│ ├── login.html
-│ ├── pacientes.html
-│ ├── evolucao.html
-│ └── relatorio.html
-└── /static/ # CSS, JS e imagens
-├── /css/
-├── /js/
-└── /img/
+## 📂 Estrutura de Pastas
+
+```text
+clinica_aba_versao_final/
+│
+├── app/
+│   ├── models/              # Modelos do banco (Paciente, Evolução, Usuário)
+│   ├── repository/          # Repositórios de dados
+│   ├── routes/              # Rotas da aplicação
+│   ├── services/            # Lógica de negócio
+│   ├── static/              # Arquivos estáticos (CSS, JS, imagens)
+│   ├── templates/           # Páginas HTML (Jinja2)
+│   ├── tests/               # Testes automatizados
+│   └── utils/               # Funções auxiliares (auth, PDF, config)
+│
+├── app.py                   # Ponto de entrada principal do Flask
+├── requirements.txt         # Dependências do projeto
+├── .env                     # Variáveis de ambiente (configurações locais)
+├── .gitignore               # Arquivos ignorados pelo Git
+├── .coverage                # Relatório de cobertura de testes
+├── README.md                # Documentação do projeto
+└── venv/                    # Ambiente virtual (não versionado)
 ```
 ---
 
-## ⚡ Funcionalidades Principais
+## 📊 Funcionalidades Principais
 
-1. **Autenticação de usuários** (Admin, Profissional, Coordenador)  
-2. **CRUD de pacientes**  
-3. **Registro de evoluções** (com autor e timestamp automático)  
-4. **Timeline de evoluções por paciente**  
-5. **Geração de relatórios PDF com gráficos**  
-6. **Prontuário centralizado e unificado**
+👥 **Usuários** — Cadastro, login e controle de acesso (Admin, Coordenador, Profissional)  
+🧾 **Pacientes** — Cadastro, edição e visualização de prontuários  
+🧠 **Evoluções** — Registro de atividades e progresso do paciente  
+📄 **Relatórios** — Geração de relatórios em PDF  
+🔐 **Autenticação** — Sessões seguras com Flask-Login e utils de autenticação  
+🧩 **Testes** — Testes automatizados para serviços e autenticação  
 
 ---
 
@@ -77,11 +95,10 @@ clinica_aba/
 
 1. Clonar o repositório:
 ```
-git clone https://github.com/MatheusCosta001/clinica_aba
+git clone https://github.com/MatheusCosta001/clinica_aba.git
 cd clinica_aba
 ```
-
-Criar e ativar o ambiente virtual:
+2. Criar e ativar o ambiente virtual:
 ```
 python -m venv venv
 # Windows
@@ -89,15 +106,47 @@ venv\Scripts\activate
 # Linux/macOS
 source venv/bin/activate
 ```
-
-Instalar dependências:
+3. Instalar dependências:
 ```
 pip install -r requirements.txt
 ```
-
-Configurar banco PostgreSQL (local) e atualizar config.py com usuário, senha e database.
-
-Rodar o projeto:
+4. Configurar o arquivo .env:
+```
+FLASK_APP=app.py
+FLASK_ENV=development
+DATABASE_URL=postgresql://usuario:senha@localhost:5432/clinica_aba
+SECRET_KEY=sua_chave_secreta_aqui
+```
+5. Executar o sistema
 ```
 python app.py
 ```
+Acesse em: http://localhost:5000
+
+---
+
+## 🧪 Executar Testes
+Para rodar os testes com relatório de cobertura:
+```
+pytest --cov=app
+```
+Gerar relatório HTML:
+```
+pytest --cov=app --cov-report=html
+```
+O relatório será salvo em htmlcov/index.html.
+
+---
+
+## 👨‍💻 Autores
+
+Matheus Costa & Mariana de Freitas  
+💡 Projeto desenvolvido como MVP de TCC — Curso de Sistemas de Informação.  
+📂 GitHub: [github.com/MatheusCosta001](https://github.com/MatheusCosta001)  
+📂 GitHub: [github.com/marif28](https://github.com/marif28)
+
+---
+
+## 🧾 Licença
+
+Este projeto é de uso acadêmico e livre para fins educacionais.
