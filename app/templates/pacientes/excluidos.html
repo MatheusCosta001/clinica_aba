@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Pacientes Excluídos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold text-primary mb-4">Pacientes Excluídos (Anonimizados)</h2>
+
+  <div class="lgpd-info">
+    <strong>⚖️ Informação LGPD:</strong> Lista de pacientes que tiveram seus dados pessoais anonimizados em conformidade com a Lei Geral de Proteção de Dados (LGPD). 
+    Os dados foram removidos ou substituídos por valores genéricos, mas os registros clínicos são preservados para continuidade de atendimento.
+  </div>
+
+  {% if pacientes %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Nome (Anonimizado)</th>
+          <th>Data de Anonimização</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in pacientes %}
+        <tr data-patient-id="{{ p.id }}" data-paciente-id="{{ p.id }}" class="patient-inactive">
+          <td>
+            <span class="anonymous-patient">Paciente Anônimo (ID: {{ p.id }})</span>
+          </td>
+          <td>
+            {% if p.anonimizado_em %}
+            {{ p.anonimizado_em.strftime('%d/%m/%Y %H:%M') }}
+            {% else %}
+            <span class="text-muted">-</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            <a href="{{ url_for('pacientes.detalhes_excluido', paciente_id=p.id) }}" class="btn btn-sm btn-view me-1">Detalhes</a>
+            {% if session.get('papel') == 'adm' %}
+            <button class="btn btn-sm btn-danger btn-perm-remove-patient" data-pid="{{ p.id }}">Excluir permanentemente</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-muted text-center py-5">Nenhum paciente anonimizado encontrado.</p>
+  {% endif %}
+</div>
+{% endblock %}
