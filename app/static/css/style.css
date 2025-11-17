@@ -11,6 +11,13 @@
     --white: #FFFFFF;
     --border-radius: 12px;
     --shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    --success: #28a745;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --info: #17a2b8;
+    --adm-color: #6c5ce7;
+    --coord-color: #0984e3;
+    --prof-color: #00b894;
 }
 
 body {
@@ -162,4 +169,150 @@ img.img-fluid {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
+}
+
+/* Timeline Styling */
+.timeline-item {
+    padding: 1.25rem;
+    border-left: 4px solid var(--primary);
+    background-color: #f9fafb;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.timeline-item:hover {
+    box-shadow: var(--shadow);
+}
+
+.timeline-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.timeline-date {
+    font-weight: 600;
+    color: var(--text-dark);
+    min-width: 110px;
+}
+
+.timeline-user {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white;
+}
+
+.role-badge.adm {
+    background-color: var(--adm-color);
+}
+
+.role-badge.coordenador {
+    background-color: var(--coord-color);
+}
+
+.role-badge.profissional {
+    background-color: var(--prof-color);
+}
+
+.timeline-content {
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin-top: 0.75rem;
+}
+
+/* Button Colors */
+.btn-view {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+}
+
+.btn-view:hover {
+    background-color: var(--primary-dark);
+    color: white;
+}
+
+.btn-anonymize {
+    background-color: var(--danger);
+    color: white;
+    border: none;
+}
+
+.btn-anonymize:hover {
+    background-color: #c82333;
+    color: white;
+}
+
+/* Inactive Patient */
+.patient-inactive {
+    opacity: 0.6;
+    background-color: #f0f0f0;
+}
+
+.patient-inactive-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.btn-disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    border: none;
+}
+
+.btn-disabled:hover {
+    background-color: #ccc;
+    color: #666;
+}
+
+/* Filter Form */
+.filter-section {
+    background-color: #f9fafb;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    border: 1px solid #e0e0e0;
+}
+
+.filter-section h5 {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* LGPD Info */
+.lgpd-info {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.lgpd-info strong {
+    color: #856404;
+}
+
+/* Anonymous Patient */
+.anonymous-patient {
+    font-style: italic;
+    color: var(--text-light);
 }

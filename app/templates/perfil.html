@@ -15,13 +15,7 @@
 
     <div class="card shadow-sm p-4 mx-auto" style="max-width: 600px;">
         <div class="text-center mb-4">
-            <img 
-                src="{{ url_for('static', filename='img/profile_default.png') }}" 
-                alt="Foto de perfil" 
-                class="rounded-circle border" 
-                width="140" height="140"
-                style="object-fit: cover;"
-            >
+            <img src="{{ url_for('static', filename='img/profile_default.png') }}" alt="Foto de perfil" class="rounded-circle border" width="140" height="140" style="object-fit: cover;">
             <h4 class="mt-3">{{ user.nome }}</h4>
             <p class="text-muted mb-0">{{ user.email }}</p>
             <small class="text-secondary">{{ user.especialidade or 'Sem especialidade' }}</small>
@@ -43,20 +37,42 @@
                 <input type="password" class="form-control" name="senha" placeholder="Deixe em branco para manter a atual">
             </div>
 
+            {% if user.papel == 'profissional' %}
             <div class="form-group mb-3">
                 <label>Especialidade:</label>
-                <input type="text" class="form-control" name="especialidade" value="{{ user.especialidade or '' }}">
+                <select name="especialidade" class="form-control">
+                    <option value="">-- Nenhuma --</option>
+                    <option value="psicologo" {% if user.especialidade=='psicologo' %}selected{% endif %}>Psicólogo</option>
+                    <option value="fonoaudiologo" {% if user.especialidade=='fonoaudiologo' %}selected{% endif %}>Fonoaudiólogo</option>
+                    <option value="terapeuta_ocupacional" {% if user.especialidade=='terapeuta_ocupacional' %}selected{% endif %}>Terapeuta Ocupacional</option>
+                    <option value="psicomotricista" {% if user.especialidade=='psicomotricista' %}selected{% endif %}>Psicomotricista</option>
+                    <option value="psicopedagogo" {% if user.especialidade=='psicopedagogo' %}selected{% endif %}>Psicopedagogo</option>
+                    <option value="aplicador_aba" {% if user.especialidade=='aplicador_aba' %}selected{% endif %}>Aplicador ABA</option>
+                </select>
             </div>
+            {% endif %}
 
             <div class="d-flex justify-content-between mt-4">
                 <button type="submit" class="btn btn-primary">Salvar alterações</button>
             </div>
         </form>
+    </div>
 
-        <form method="POST" action="{{ url_for('auth.excluir_conta') }}" 
-              onsubmit="return confirm('Tem certeza que deseja excluir sua conta?');" 
-              class="mt-3 text-end">
-            <button type="submit" class="btn btn-danger">Excluir Conta</button>
+    <div class="card shadow-sm p-4 mx-auto mt-5" style="max-width: 600px; border-left: 4px solid #dc3545;">
+        <h4 class="text-danger mb-3">🔒 Área de Risco</h4>
+        <p class="text-muted small mb-3">
+            Esta seção permite gerenciar sua conta de forma irreversível. Ao excluir sua conta, seus dados pessoais (nome, email, senha e informações sensíveis) serão <strong>anonimizados em conformidade com a LGPD</strong>. 
+            Seus registros clínicos e evoluções continuarão no sistema para fins de continuidade de atendimento, mas sem associação com seus dados identificáveis.
+        </p>
+        
+        <form method="POST" action="{{ url_for('auth.excluir_conta') }}">
+            <div class="mb-3">
+                <label for="senha_confirmacao" class="form-label fw-semibold">Confirme sua senha para prosseguir</label>
+                <input type="password" name="senha_confirmacao" id="senha_confirmacao" class="form-control" placeholder="Senha" required>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('AVISO: Esta ação é irreversível. Seus dados pessoais serão anonimizados. Tem certeza?');">Excluir Conta Permanentemente</button>
+            </div>
         </form>
     </div>
 </div>

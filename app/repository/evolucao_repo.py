@@ -10,3 +10,12 @@ class EvolucaoRepo:
     def add(evolucao):
         db.session.add(evolucao)
         db.session.commit()
+
+    @staticmethod
+    def get_by_id(evolucao_id):
+        return Evolucao.query.get(evolucao_id)
+
+    @staticmethod
+    def delete(evolucao):
+        db.session.delete(evolucao)
+        db.session.commit()

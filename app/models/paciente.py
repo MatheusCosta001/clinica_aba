@@ -1,5 +1,7 @@
 from app import db
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
+
 
 class Paciente(db.Model):
     __tablename__ = "pacientes"
@@ -14,5 +16,7 @@ class Paciente(db.Model):
     bairro = db.Column(db.String(150), nullable=True)
     cidade = db.Column(db.String(150), nullable=True)
     uf = db.Column(db.String(2), nullable=True)
+    anonimizado = db.Column(db.Boolean, default=False, nullable=False)
+    anonimizado_em = db.Column(db.DateTime, nullable=True)
 
     evolucoes = db.relationship("Evolucao", back_populates="paciente", cascade="all, delete-orphan")

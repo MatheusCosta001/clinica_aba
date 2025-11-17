@@ -1,11 +1,18 @@
 from app.models.paciente import Paciente
 from app.repository.paciente_repo import PacienteRepo
 from datetime import datetime
+from zoneinfo import ZoneInfo
+from app import db
 
 class PacienteService:
     @staticmethod
     def list_pacientes():
         return PacienteRepo.list_all()
+
+    @staticmethod
+    def list_excluidos():
+        from app.models.paciente import Paciente as Pac
+        return Pac.query.filter_by(anonimizado=True).order_by(Pac.nome).all()
 
     @staticmethod
     def get_paciente(paciente_id):
@@ -53,4 +60,37 @@ class PacienteService:
         p = PacienteRepo.get_by_id(paciente_id)
         if not p:
             raise ValueError("Paciente não encontrado")
-        PacienteRepo.delete(p)
+        # Anonimizar por LGPD em vez de remover histórico
+        p.nome = "Paciente Anônimo"
+        p.data_nascimento = None
+        p.idade = None
+        p.diagnostico = None
+        p.responsavel = None
+        p.cep = None
+        p.rua = None
+        p.bairro = None
+        p.cidade = None
+        p.uf = None
+        p.anonimizado = True
+        p.anonimizado_em = datetime.now(ZoneInfo("America/Sao_Paulo"))
+        db.session.commit()
+
+    @staticmethod
+    def anonimizar_paciente(paciente_id, motivo=None):
+        p = PacienteRepo.get_by_id(paciente_id)
+        if not p:
+            raise ValueError("Paciente não encontrado")
+        p.nome = "Paciente Anônimo"
+        p.data_nascimento = None
+        p.idade = None
+        p.diagnostico = None
+        p.responsavel = None
+        p.cep = None
+        p.rua = None
+        p.bairro = None
+        p.cidade = None
+        p.uf = None
+        p.anonimizado = True
+        p.anonimizado_em = datetime.now(ZoneInfo("America/Sao_Paulo"))
+        db.session.commit()
+        return p

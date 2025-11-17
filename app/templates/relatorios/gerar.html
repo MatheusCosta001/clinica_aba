@@ -4,6 +4,34 @@
 {% block content %}
 <div class="container-fluid py-4">
 
+  {% if not paciente %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary">Histórico de Relatórios</h2>
+    <a class="btn btn-outline-secondary px-3" href="{{ url_for('pacientes.index') }}">← Voltar</a>
+  </div>
+
+  <div class="card shadow-sm p-4">
+    {% if history %}
+    <table class="table">
+      <thead>
+        <tr><th>Paciente</th><th>Gerado por</th><th>Data</th></tr>
+      </thead>
+      <tbody>
+        {% for r in history %}
+        <tr>
+          <td>{{ r.paciente.nome if r.paciente else '-' }}</td>
+          <td>{% if r.gerador and not r.gerador.anonimizado %}{{ r.gerador.nome }}{% else %}Usuário Anônimo{% endif %}</td>
+          <td>{{ r.gerado_em }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="text-muted">Nenhum relatório gerado ainda.</p>
+    {% endif %}
+  </div>
+
+  {% else %}
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-primary">Gerar Relatório — {{ paciente.nome }}</h2>
     <a class="btn btn-outline-secondary px-3" href="{{ url_for('pacientes.index') }}">← Voltar</a>
@@ -11,6 +39,29 @@
 
   <div class="card shadow-sm p-4">
     <form method="POST" action="{{ url_for('relatorios.gerar', paciente_id=paciente.id) }}">
+      <!-- Date Range Filter -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Período do Relatório</label>
+        <p class="text-muted mb-2">(Opcional - deixe em branco para incluir todas as datas)</p>
+        <div class="row">
+          <div class="col-md-6">
+            <label class="form-label">Data de Início</label>
+            <input type="date" name="data_inicio" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Data de Término</label>
+            <input type="date" name="data_fim" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments Section -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Comentários/Considerações Finais</label>
+        <p class="text-muted mb-2">(Se deixado em branco, será exibido: "Relatório gerado para visualização interna")</p>
+        <textarea name="comentarios" class="form-control" rows="4" placeholder="Adicione observações, considerações clínicas ou notas importantes..."></textarea>
+      </div>
+
       <div class="mb-4">
         <label class="form-label fw-semibold">Incluir anotações das áreas</label>
         <p class="text-muted mb-2">(Se nenhuma for selecionada, serão incluídas todas)</p>
@@ -42,6 +93,7 @@
       </div>
     </form>
   </div>
+  {% endif %}
 
 </div>
 {% endblock %}

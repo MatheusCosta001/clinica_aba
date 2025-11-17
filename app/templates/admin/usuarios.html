@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Usuários - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">Usuários</h2>
+
+        <div class="card mb-3 p-3">
+            <form method="GET" class="row g-2">
+                <div class="col-md-4">
+                    <input type="search" name="q" value="{{ q or '' }}" class="form-control" placeholder="Buscar por nome ou email">
+                </div>
+                <div class="col-md-2">
+                    <select name="papel_filter" class="form-control">
+                        <option value="">Todos os papéis</option>
+                        <option value="adm" {% if papel_filter == 'adm' %}selected{% endif %}>ADM</option>
+                        <option value="coordenador" {% if papel_filter == 'coordenador' %}selected{% endif %}>Coordenador</option>
+                        <option value="profissional" {% if papel_filter == 'profissional' %}selected{% endif %}>Profissional</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="especialidade_filter" class="form-control">
+                        <option value="">Todas as especialidades</option>
+                        {% if especialidades %}
+                            {% for esp in especialidades %}
+                                <option value="{{ esp }}" {% if especialidade_filter==esp %}selected{% endif %}>{{ esp.replace('_',' ')|title }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="date_filter" value="{{ date_filter or '' }}" class="form-control" />
+                </div>
+                <div class="col-md-1 d-grid">
+                    <button class="btn btn-primary">OK</button>
+                </div>
+            </form>
+        </div>
+
+        <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Papel</th>
+                <th>Anonimizado</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr>
+                <td>{{ u.id }}</td>
+                <td>{{ u.nome }}</td>
+                <td>{{ u.email or '-' }}</td>
+                <td>{{ u.papel }}</td>
+                <td>{{ 'Sim' if u.anonimizado else 'Não' }}</td>
+                <td>
+                    {% if not u.anonimizado %}
+                    <a href="{{ url_for('auth.admin_view_usuario', uid=u.id) }}" class="btn btn-sm btn-view">Ver</a>
+                    <a href="{{ url_for('auth.admin_edit_usuario', uid=u.id) }}" class="btn btn-sm btn-primary ms-1">Editar</a>
+                    <form method="POST" action="{{ url_for('auth.admin_anonimizar_usuario', target_user_id=u.id) }}" style="display:inline; margin-left:6px;">
+                        <button type="submit" class="btn btn-sm btn-anonymize" onclick="return confirm('Confirmar anonimização do usuário?')">Anonimizar</button>
+                    </form>
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

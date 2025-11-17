@@ -15,6 +15,25 @@ class EvolucaoService:
         usuario = UsuarioRepo.get_by_id(usuario_id)
         if not paciente or not usuario:
             raise ValueError("Paciente ou usuário inválido")
-        e = Evolucao(paciente_id=paciente_id, usuario_id=usuario_id, anotacao=anotacao, area=area)
+        # determine profissional_especialidade based on user role
+        if usuario.papel == 'profissional':
+            prof_espec = usuario.especialidade or ''
+        elif usuario.papel == 'adm':
+            prof_espec = 'ADM'
+        elif usuario.papel == 'coordenador':
+            prof_espec = 'Coordenador'
+        else:
+            prof_espec = usuario.especialidade or ''
+
+        e = Evolucao(paciente_id=paciente_id, usuario_id=usuario_id, anotacao=anotacao, area=area, profissional_especialidade=prof_espec)
         EvolucaoRepo.add(e)
         return e    
+
+    @staticmethod
+    def delete_evolucao(evolucao_id, solicitado_por_id=None):
+        e = EvolucaoRepo.get_by_id(evolucao_id)
+        if not e:
+            raise ValueError("Evolução não encontrada.")
+        paciente_id = e.paciente_id
+        EvolucaoRepo.delete(e)
+        return paciente_id

@@ -4,10 +4,12 @@ from app.services.evolucao_service import EvolucaoService
 from app.utils.pdf_utils import gerar_relatorio_pdf
 from io import BytesIO
 from app.utils.auth_utils import login_required
+from app.models.relatorio import Relatorio
+from app import db
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 relatorios_bp = Blueprint("relatorios", __name__, url_prefix="/relatorios")
-
-
 
 @relatorios_bp.route("/", methods=["GET"])
 @login_required
@@ -16,8 +18,9 @@ def index():
     Mostra o template 'gerar.html' sem um paciente específico.
     Isso evita erro quando o usuário entra direto pela navbar.
     """
-    return render_template("relatorios/gerar.html", paciente=None)
-
+    # também mostrar histórico de relatórios
+    history = Relatorio.query.order_by(Relatorio.gerado_em.desc()).limit(50).all()
+    return render_template("relatorios/gerar.html", paciente=None, history=history)
 
 @relatorios_bp.route("/<int:paciente_id>", methods=["GET", "POST"])
 @login_required
@@ -29,18 +32,65 @@ def gerar(paciente_id):
 
     if request.method == "POST":
         areas = request.form.getlist("areas")
+        data_inicio_str = request.form.get("data_inicio", "")
+        data_fim_str = request.form.get("data_fim", "")
+        comentarios = request.form.get("comentarios", "").strip()
+
+        # default message if no comments provided
+        if not comentarios:
+            comentarios = "Relatório gerado para visualização interna"
+
         todas = EvolucaoService.list_by_paciente(paciente_id)
+
+        # filter by date range if provided
+        if data_inicio_str or data_fim_str:
+            from datetime import datetime
+            try:
+                data_inicio = datetime.strptime(data_inicio_str, "%Y-%m-%d").date() if data_inicio_str else None
+                data_fim = datetime.strptime(data_fim_str, "%Y-%m-%d").date() if data_fim_str else None
+                todas = [e for e in todas if (
+                    (data_inicio is None or e.data_hora.date() >= data_inicio) and
+                    (data_fim is None or e.data_hora.date() <= data_fim)
+                )]
+            except Exception:
+                pass
 
         if areas:
             selecionadas = [e for e in todas if (e.area or "").lower() in [a.lower() for a in areas]]
         else:
             selecionadas = todas
 
+        # get user name and role from session (already available)
+        user_nome = session.get("user_nome", "Usuário")
+        user_papel = session.get("papel", "")
+
         buffer = gerar_relatorio_pdf(
             paciente,
             selecionadas,
-            session.get("user_nome", "Usuário")
+            user_nome,
+            comentarios=comentarios,
+            user_papel=user_papel,
+            data_inicio=data_inicio_str,
+            data_fim=data_fim_str
         )
+
+        # save report history
+        try:
+            from datetime import datetime as dt
+            data_inicio = dt.strptime(data_inicio_str, "%Y-%m-%d").date() if data_inicio_str else None
+            data_fim = dt.strptime(data_fim_str, "%Y-%m-%d").date() if data_fim_str else None
+            r = Relatorio(
+                paciente_id=paciente.id,
+                gerado_por_id=session.get('user_id'),
+                gerado_em=datetime.now(ZoneInfo('America/Sao_Paulo')),
+                data_inicio=data_inicio,
+                data_fim=data_fim,
+                comentarios=comentarios
+            )
+            db.session.add(r)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
 
         return send_file(
             buffer,

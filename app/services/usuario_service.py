@@ -2,6 +2,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.models.usuario import Usuario
 from app.repository.usuario_repo import UsuarioRepo
 from app import db
+from datetime import datetime
+from zoneinfo import ZoneInfo
+from app.models.anonymization_log import AnonymizationLog
 
 
 class UsuarioService:
@@ -42,7 +45,7 @@ class UsuarioService:
         return None
 
     @staticmethod
-    def create_user(nome, email, senha, papel, especialidade=None):
+    def create_user(nome, email, senha, papel, especialidade=None, aceite_lgpd=False):
         """
         Cria um novo usuário no sistema.
         - Verifica se o e-mail já existe.
@@ -61,7 +64,9 @@ class UsuarioService:
             email=email.strip().lower(),
             senha_hash=senha_hash,
             papel=papel.strip(),
-            especialidade=especialidade.strip() if especialidade else None
+            especialidade=especialidade.strip() if especialidade else None,
+            aceite_lgpd=bool(aceite_lgpd),
+            aceite_lgpd_at=(datetime.now(ZoneInfo("America/Sao_Paulo")) if aceite_lgpd else None)
         )
 
         UsuarioRepo.add(novo_usuario)
@@ -105,6 +110,38 @@ class UsuarioService:
         user = UsuarioRepo.get_by_id(user_id)
         if not user:
             raise ValueError("Usuário não encontrado.")
+        # For LGPD: anonymize instead of deleting to preserve relations
+        UsuarioService.anonimizar_usuario(user_id, anonimizado_por_id=user_id, motivo="Exclusão solicitada")
 
-        db.session.delete(user)
-        db.session.commit()
+    @staticmethod
+    def anonimizar_usuario(user_id, anonimizado_por_id=None, motivo="Solicitação"):
+        user = UsuarioRepo.get_by_id(user_id)
+        if not user:
+            raise ValueError("Usuário não encontrado.")
+
+        # remove personal data but keep relationships
+        user.nome = "Usuário Anônimo"
+        # If the DB requires email non-null, set a safe placeholder.
+        try:
+            nullable = Usuario.__table__.c.email.nullable
+        except Exception:
+            nullable = True
+        if nullable:
+            user.email = None
+        else:
+            user.email = f"deleted_{user.id}@anon.local"
+        user.senha_hash = None
+        user.especialidade = None
+        user.aceite_lgpd = False
+        user.aceite_lgpd_at = None
+        user.anonimizado = True
+        user.anonimizado_em = datetime.now(ZoneInfo("America/Sao_Paulo"))
+
+        # create audit log
+        try:
+            log = AnonymizationLog(user_id=user.id, who_id=anonimizado_por_id, reason=motivo)
+            db.session.add(log)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+        return user

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Política de Privacidade e LGPD{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="bg-white p-4 rounded-4 shadow-sm">
+    <h2 class="mb-4 text-primary">Política de Privacidade e LGPD</h2>
+
+    <p>
+      Esta Política descreve como a Clínica ABA realiza o tratamento de dados pessoais
+      no contexto do sistema web utilizado para gerenciamento de atendimentos, prontuários
+      e informações administrativas.
+    </p>
+
+    <h4 class="mt-4">1. Finalidade do Tratamento</h4>
+    <p>Os dados pessoais são coletados para fins clínicos, operacionais e administrativos,
+       incluindo:</p>
+    <ul>
+      <li>Cadastro de usuários (pacientes, profissionais, coordenadores e administradores)</li>
+      <li>Organização de atendimentos e sessões clínicas</li>
+      <li>Emissão de relatórios clínicos e financeiros</li>
+      <li>Gestão interna da equipe</li>
+    </ul>
+
+    <h4 class="mt-4">2. Dados Coletados</h4>
+    <p>O sistema pode coletar os seguintes dados pessoais:</p>
+    <ul>
+      <li>Nome completo</li>
+      <li>E-mail e credenciais de acesso</li>
+      <li>Informações profissionais (papel, especialidade)</li>
+      <li>Dados clínicos inseridos por profissionais autorizados</li>
+    </ul>
+
+    <h4 class="mt-4">3. Base Legal</h4>
+    <p>O tratamento ocorre conforme as bases legais da LGPD, especialmente:</p>
+    <ul>
+      <li>Execução de contrato (Art. 7º, V)</li>
+      <li>Cumprimento de obrigação legal (Art. 7º, II)</li>
+      <li>Proteção da saúde (Art. 7º, VIII)</li>
+      <li>Legítimo interesse, quando aplicável (Art. 7º, IX)</li>
+    </ul>
+
+    <h4 class="mt-4">4. Compartilhamento</h4>
+    <p>Os dados são acessados exclusivamente por profissionais autorizados,
+       respeitando níveis de permissão, tais como:</p>
+    <ul>
+      <li>Administrador: gestão geral e registro de usuários</li>
+      <li>Coordenadores: acesso clínico e supervisão</li>
+      <li>Profissionais: registros de atendimentos dos pacientes que atendem</li>
+    </ul>
+
+    <h4 class="mt-4">5. Segurança</h4>
+    <p>O sistema adota medidas técnicas para proteção dos dados, como:</p>
+    <ul>
+      <li>Criptografia de senhas</li>
+      <li>Controle de acesso por nível de permissão</li>
+      <li>Logs de atividade</li>
+      <li>Armazenamento seguro em banco de dados</li>
+    </ul>
+
+    <h4 class="mt-4">6. Direitos do Titular</h4>
+    <p>O titular pode solicitar:</p>
+    <ul>
+      <li>Acesso aos seus dados</li>
+      <li>Correção de dados incorretos</li>
+      <li>Anonimização, bloqueio ou eliminação</li>
+      <li>Revogação de consentimento</li>
+    </ul>
+
+    <h4 class="mt-4">7. Retenção</h4>
+    <p>
+      Dados clínicos podem ser mantidos pelo período necessário para cumprimento de obrigações
+      legais e para preservação de histórico médico, mesmo após solicitação de exclusão.
+    </p>
+
+    <h4 class="mt-4">8. Contato</h4>
+    <p>
+      Para solicitações relacionadas à LGPD, entre em contato pelo e-mail  
+      <strong>privacidade@clinicaaba.com</strong>.
+    </p>
+
+    <a href="{{ url_for('auth.register') }}" class="btn btn-primary mt-4">
+      Voltar ao cadastro
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -36,33 +36,76 @@
 
   {% else %}
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold text-primary">Evoluções de {{ paciente.nome }}</h2>
+    <div>
+      <h2 class="fw-bold text-primary mb-2">Evoluções de {% if paciente.anonimizado %}<span class="anonymous-patient">Paciente Anônimo</span>{% else %}{{ paciente.nome }}{% endif %}</h2>
+      {% if paciente.anonimizado %}
+      <small class="text-muted">Este paciente foi anonimizado em conformidade com a LGPD em {{ paciente.anonimizado_em.strftime('%d/%m/%Y') if paciente.anonimizado_em else 'data desconhecida' }}</small>
+      {% endif %}
+    </div>
     <div>
       <a class="btn btn-success px-3 me-2" href="{{ url_for('evolucoes.novo', paciente_id=paciente.id) }}">+ Nova Anotação</a>
       <a class="btn btn-outline-secondary px-3" href="{{ url_for('evolucoes.index') }}">← Voltar</a>
     </div>
   </div>
 
-  <div class="card shadow-sm">
-    <div class="card-body">
-      {% if evolucoes %}
-      <ul class="list-group list-group-flush">
-        {% for e in evolucoes %}
-        <li class="list-group-item py-3">
-          <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <h5 class="fw-semibold mb-1 text-dark">{{ e.usuario.nome }}</h5>
-              <small class="text-muted">{{ e.data_hora.strftime('%d/%m/%Y %H:%M') }}</small>
-              <p class="mt-2 mb-0">{{ e.anotacao }}</p>
-            </div>
-          </div>
-        </li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <p class="text-muted text-center py-3 mb-0">Nenhuma evolução cadastrada para este paciente.</p>
-      {% endif %}
-    </div>
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <h5>Filtrar Evoluções</h5>
+    <form method="GET" class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Buscar (texto ou profissional)</label>
+        <input type="search" name="q" value="{{ q or '' }}" placeholder="Nome, anotação ou termo" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Especialidade</label>
+        <select name="especialidade_filter" class="form-control">
+          <option value="">-- Todas --</option>
+          {% if especialidades %}
+            {% for esp in especialidades %}
+              <option value="{{ esp }}">{{ esp.replace('_',' ')|title }}</option>
+            {% endfor %}
+          {% endif %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Data</label>
+        <input type="date" name="data_filter" class="form-control">
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <div>
+          <button class="btn btn-primary" type="submit">Filtrar</button>
+          <a href="{{ url_for('evolucoes.timeline', paciente_id=paciente.id) }}" class="btn btn-outline-secondary ms-2">Limpar</a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div>
+    {% if evolucoes %}
+      {% for e in evolucoes %}
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <div class="timeline-date">{{ e.data_hora.strftime('%d/%m %H:%M') }}</div>
+          <div class="timeline-user">{% if e.usuario.anonimizado %}<span class="anonymous-patient">Profissional Anônimo</span>{% else %}{{ e.usuario.nome }}{% endif %}</div>
+          {% if e.profissional_especialidade %}
+          <span class="role-badge {% if e.usuario and e.usuario.papel == 'adm' %}adm{% elif e.usuario and e.usuario.papel == 'coordenador' %}coordenador{% else %}profissional{% endif %}">
+            {{ e.profissional_especialidade.replace('_',' ')|title }}
+          </span>
+          {% endif %}
+          {% if session.get('papel') in ('adm', 'coordenador') %}
+          <form method="POST" action="{{ url_for('evolucoes.excluir_evolucao', evolucao_id=e.id) }}" style="display:inline; margin-left: auto;">
+            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir esta evolução?');" title="Excluir evolução">🗑️</button>
+          </form>
+          {% endif %}
+        </div>
+        <div class="timeline-content">
+          {{ e.anotacao }}
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <p class="text-muted text-center py-5">Nenhuma evolução cadastrada para este paciente.</p>
+    {% endif %}
   </div>
   {% endif %}
 </div>

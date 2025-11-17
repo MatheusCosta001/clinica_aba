@@ -10,6 +10,7 @@
       <p class="text-muted mb-4">Preencha os campos abaixo para cadastrar um novo usuário.</p>
 
       <form method="POST" action="{{ url_for('auth.register') }}">
+
         <div class="mb-3">
           <label for="nome" class="form-label">Nome completo</label>
           <input type="text" id="nome" name="nome" class="form-control form-control-lg" placeholder="Ex: Ana Silva" required>
@@ -23,6 +24,11 @@
         <div class="mb-3">
           <label for="senha" class="form-label">Senha</label>
           <input type="password" id="senha" name="senha" class="form-control form-control-lg" placeholder="••••••••" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="confirmar_senha" class="form-label">Confirmar senha</label>
+          <input type="password" id="confirmar_senha" name="confirmar_senha" class="form-control form-control-lg" placeholder="Repita a senha" required>
         </div>
 
         <div class="mb-3">
@@ -43,9 +49,52 @@
           </div>
         </div>
 
-        <div class="mb-4">
-          <label for="especialidade" class="form-label">Especialidade (opcional)</label>
-          <input type="text" id="especialidade" name="especialidade" class="form-control form-control-lg" placeholder="Ex: Psicologia ABA">
+        <div class="mb-4" id="especialidade_block" style="display:none;">
+          <label for="especialidade" class="form-label">Especialidade (apenas para Profissionais)</label>
+          <select id="especialidade" name="especialidade" class="form-control">
+            <option value="">-- Nenhuma --</option>
+            <option value="psicologo">Psicólogo</option>
+            <option value="fonoaudiologo">Fonoaudiólogo</option>
+            <option value="terapeuta_ocupacional">Terapeuta Ocupacional</option>
+            <option value="psicomotricista">Psicomotricista</option>
+            <option value="psicopedagogo">Psicopedagogo</option>
+            <option value="aplicador_aba">Aplicador ABA</option>
+          </select>
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" value="on" id="aceite_lgpd" name="aceite_lgpd" required>
+          <label class="form-check-label" for="aceite_lgpd">
+            Li e aceito os <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Termos de Uso e Política de Privacidade</a>
+          </label>
+        </div>
+
+        <!-- Terms modal -->
+        <div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Termos de Uso e Política de Privacidade</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+              </div>
+
+              <div class="modal-body">
+                <p>Ao utilizar este sistema, você concorda com o tratamento de dados pessoais conforme descrito nesta política. Os dados são usados apenas para fins clínicos e administrativos. O acesso a informações sensíveis é restrito aos profissionais autorizados.</p>
+                <p>Os titulares podem solicitar acesso, correção ou anonimização de seus dados. A anonimização remove informações pessoais, preservando registros clínicos essenciais.</p>
+                <p>Para mais informações, leia a política completa na página dedicada.</p>
+              </div>
+
+              <!-- *** ALTERAÇÃO AQUI *** -->
+              <div class="modal-footer d-flex justify-content-between">
+                <a href="{{ url_for('auth.lgpd') }}" class="btn btn-outline-primary">
+                  Ver termo completo
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+              </div>
+              <!-- *** FIM DA ALTERAÇÃO *** -->
+
+            </div>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Cadastrar</button>
@@ -67,4 +116,23 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Mostrar/ocultar select de especialidade quando papel == profissional
+  document.addEventListener('DOMContentLoaded', function(){
+    const radios = document.querySelectorAll('input[name="papel"]');
+    const espBlock = document.getElementById('especialidade_block');
+    function update(){
+      const sel = document.querySelector('input[name="papel"]:checked');
+      if(sel && sel.value === 'profissional'){
+        espBlock.style.display = 'block';
+      } else {
+        espBlock.style.display = 'none';
+      }
+    }
+    radios.forEach(r => r.addEventListener('change', update));
+    update();
+  });
+</script>
+
 {% endblock %}

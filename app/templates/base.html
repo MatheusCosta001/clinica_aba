@@ -35,19 +35,13 @@
       100% { opacity: 0; transform: translateY(10px); }
     }
 
-    .navbar-dark {
-      background-color: #0d6efd;
-    }
-
-    .navbar-brand span {
-      font-weight: 600;
-      font-size: 1.1rem;
-    }
-
-    .nav-link.active {
-      font-weight: 600;
-      text-decoration: underline;
-    }
+    body { background-color: #f7fbff; color: #18304a; }
+    .navbar-dark { background-color: #5A9BFF; border-bottom: 1px solid rgba(11,84,128,0.08); }
+    .navbar-brand span { font-weight: 600; font-size: 1.05rem; color: #ffff; }
+    .navbar-nav .nav-item { border-left: 1px solid rgba(255, 255, 255, 0.06); }
+    .navbar-nav .nav-item:first-child { border-left: none; }
+    .nav-link { color: #23485f; }
+    .nav-link.active { font-weight: 600; color: #0b5e80; }
   </style>
 
   {% block head %}{% endblock %}
@@ -80,7 +74,13 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto align-items-center">
+          {% if session.get('papel') == 'adm' %}
+          <li class="nav-item"><a class="nav-link {% if request.endpoint.startswith('auth.admin_list_usuarios') or request.endpoint.startswith('auth.admin') %}active{% endif %}" href="{{ url_for('auth.admin_list_usuarios') }}">Usuários Ativos</a></li>
+          {% endif %}
           <li class="nav-item"><a class="nav-link {% if request.endpoint.startswith('pacientes') %}active{% endif %}" href="{{ url_for('pacientes.index') }}">Pacientes</a></li>
+          {% if session.get('papel') == 'adm' %}
+          <li class="nav-item"><a class="nav-link {% if request.endpoint == 'pacientes.excluidos' %}active{% endif %}" href="{{ url_for('pacientes.excluidos') }}">Pacientes Excluídos</a></li>
+          {% endif %}
           <li class="nav-item"><a class="nav-link {% if request.endpoint.startswith('evolucoes') %}active{% endif %}" href="{{ url_for('evolucoes.index') }}">Evoluções</a></li>
           <li class="nav-item"><a class="nav-link {% if request.endpoint == 'auth.perfil' %}active{% endif %}" href="{{ url_for('auth.perfil') }}">Perfil</a></li>
           <li class="nav-item"><a class="nav-link text-warning" href="{{ url_for('auth.logout') }}">Sair</a></li>
