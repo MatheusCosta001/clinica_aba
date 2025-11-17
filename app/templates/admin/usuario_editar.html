@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Editar Usuário{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Editar Usuário</h2>
+  <div class="card p-4">
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Nome</label>
+        <input type="text" name="nome" class="form-control" value="{{ usuario.nome }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" value="{{ usuario.email }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Papel</label>
+        <select name="papel" class="form-control">
+          <option value="profissional" {% if usuario.papel=='profissional' %}selected{% endif %}>Profissional</option>
+          <option value="coordenador" {% if usuario.papel=='coordenador' %}selected{% endif %}>Coordenador</option>
+          <option value="adm" {% if usuario.papel=='adm' %}selected{% endif %}>ADM</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Especialidade</label>
+        <select name="especialidade" class="form-control">
+          <option value="">-- Nenhuma --</option>
+          <option value="psicologo" {% if usuario.especialidade=='psicologo' %}selected{% endif %}>Psicólogo</option>
+          <option value="fonoaudiologo" {% if usuario.especialidade=='fonoaudiologo' %}selected{% endif %}>Fonoaudiólogo</option>
+          <option value="terapeuta_ocupacional" {% if usuario.especialidade=='terapeuta_ocupacional' %}selected{% endif %}>Terapeuta Ocupacional</option>
+          <option value="psicomotricista" {% if usuario.especialidade=='psicomotricista' %}selected{% endif %}>Psicomotricista</option>
+          <option value="psicopedagogo" {% if usuario.especialidade=='psicopedagogo' %}selected{% endif %}>Psicopedagogo</option>
+          <option value="aplicador_aba" {% if usuario.especialidade=='aplicador_aba' %}selected{% endif %}>Aplicador ABA</option>
+        </select>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <a href="{{ url_for('auth.admin_list_usuarios') }}" class="btn btn-secondary me-2">Cancelar</a>
+        <button class="btn btn-primary">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

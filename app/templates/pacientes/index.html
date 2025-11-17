@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Pacientes | Clínica ABA{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary">Pacientes</h2>
+    {% if session.get('papel') in ('adm', 'coordenador') %}
+    <a class="btn btn-success px-4" href="{{ url_for('pacientes.novo') }}">+ Novo Paciente</a>
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <form method="GET" class="row g-2">
+      <div class="col-md-6">
+        <input type="search" name="q" value="{{ q or '' }}" class="form-control" placeholder="Buscar por nome, diagnóstico, cidade ou idade">
+      </div>
+      <div class="col-md-6">
+        <button class="btn btn-primary">Buscar</button>
+        <a href="{{ url_for('pacientes.index') }}" class="btn btn-outline-secondary ms-2">Limpar</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      {% if pacientes %}
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Nome</th>
+              <th>Idade</th>
+              <th>Diagnóstico</th>
+              <th>Cidade</th>
+              <th>UF</th>
+              <th>Status</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in pacientes %}
+            <tr data-patient-id="{{ p.id }}" data-paciente-id="{{ p.id }}" {% if p.anonimizado %}class="patient-inactive"{% endif %}>
+              <td class="fw-semibold">
+                {% if p.anonimizado %}
+                <span class="anonymous-patient">Paciente Anônimo</span>
+                {% else %}
+                {{ p.nome }}
+                {% endif %}
+              </td>
+              <td>{{ p.idade or '' }}</td>
+              <td>{{ p.diagnostico or '' }}</td>
+              <td>{{ p.cidade or '' }}</td>
+              <td>{{ p.uf or '' }}</td>
+              <td>
+                {% if p.anonimizado %}
+                <span class="patient-inactive-badge">INATIVO</span>
+                {% else %}
+                <span class="badge bg-success">ATIVO</span>
+                {% endif %}
+              </td>
+              <td class="text-center">
+                <a class="btn btn-sm btn-primary me-1" href="{{ url_for('evolucoes.timeline', paciente_id=p.id) }}">Evoluções</a>
+                {% if session.get('papel') in ('adm', 'coordenador') %}
+                  {% if not p.anonimizado %}
+                  <a class="btn btn-sm btn-warning me-1" href="{{ url_for('pacientes.editar', paciente_id=p.id) }}">Editar</a>
+                  <form method="post" action="{{ url_for('pacientes.deletar', paciente_id=p.id) }}" style="display:inline" onsubmit="return confirm('Deletar este paciente? Os dados serão anonimizados.')">
+                    <button class="btn btn-sm btn-anonymize me-1">Deletar</button>
+                  </form>
+                  {% else %}
+                  <button class="btn btn-sm btn-disabled me-1" disabled title="Paciente inativo">Editar</button>
+                  <button class="btn btn-sm btn-disabled me-1" disabled title="Paciente já foi deletado">Deletar</button>
+                  {% endif %}
+                {% endif %}
+                {% if not p.anonimizado %}
+                <a class="btn btn-sm btn-secondary" href="{{ url_for('relatorios.gerar', paciente_id=p.id) }}">Relatório</a>
+                {% else %}
+                <button class="btn btn-sm btn-disabled" disabled title="Relatório indisponível para paciente inativo">Relatório</button>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="text-muted text-center py-3 mb-0">Nenhum paciente cadastrado.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
