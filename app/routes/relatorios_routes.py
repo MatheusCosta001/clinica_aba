@@ -29,7 +29,7 @@ def gerar(paciente_id):
 
     if request.method == "POST":
         areas = request.form.getlist("areas")
-        todas = EvolucaoService.list_by_paciente(paciente_id)
+        todas = EvolucaoService.listByPaciente(paciente_id)
 
         if areas:
             selecionadas = [e for e in todas if (e.area or "").lower() in [a.lower() for a in areas]]
