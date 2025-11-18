@@ -31,7 +31,7 @@ def timeline(paciente_id):
 @evolucoes_bp.route("/paciente/<int:paciente_id>/novo", methods=["GET", "POST"])
 @login_required
 def novo(paciente_id):
-    paciente = PacienteService.get_paciente(paciente_id)
+    paciente = PacienteService.getPaciente(paciente_id)
     if not paciente:
         flash("Paciente não encontrado.", "danger")
         return redirect(url_for("evolucoes.index"))
