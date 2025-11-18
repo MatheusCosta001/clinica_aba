@@ -76,7 +76,7 @@ def excluir_evolucao(evolucao_id):
         return redirect(url_for("evolucoes.index"))
 
     try:
-        paciente_id = EvolucaoService.delete_evolucao(evolucao_id, solicitado_por_id=session.get("user_id"))
+        paciente_id = EvolucaoService.delete_evolucao(evolucao_id, solicitadoPorId=session.get("user_id"))
         flash("Evolução excluída com sucesso.", "success")
         return redirect(url_for("evolucoes.timeline", paciente_id=paciente_id))
     except Exception as e:
