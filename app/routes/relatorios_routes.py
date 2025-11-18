@@ -40,7 +40,7 @@ def gerar(paciente_id):
         if not comentarios:
             comentarios = "Relatório gerado para visualização interna"
 
-        todas = EvolucaoService.list_by_paciente(paciente_id)
+        todas = EvolucaoService.listByPaciente(paciente_id)
 
         
         if data_inicio_str or data_fim_str:
