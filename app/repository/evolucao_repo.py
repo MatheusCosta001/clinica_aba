@@ -3,19 +3,23 @@ from app.models.evolucao import Evolucao
 
 class EvolucaoRepo:
     @staticmethod
-    def list_by_paciente(paciente_id):
-        return Evolucao.query.filter_by(paciente_id=paciente_id).order_by(Evolucao.data_hora.desc()).all()
+    def listByPaciente(pacienteId):
+        return Evolucao.query.filter_by(pacienteId=pacienteId).order_by(Evolucao.dataHora.desc()).all()
 
     @staticmethod
     def add(evolucao):
         db.session.add(evolucao)
         db.session.commit()
+        return evolucao
 
     @staticmethod
-    def get_by_id(evolucao_id):
-        return Evolucao.query.get(evolucao_id)
+    def getById(evolucao_id):
+        if not evolucao_id:
+            return None
+        return db.session.get(Evolucao, evolucao_id)
 
     @staticmethod
     def delete(evolucao):
         db.session.delete(evolucao)
         db.session.commit()
+        return True

@@ -50,22 +50,14 @@ def register():
         confirmar = request.form.get("confirmar_senha")
         papel = request.form.get("papel")
         especialidade = request.form.get("especialidade")
-        aceite_lgpd = True if request.form.get("aceite_lgpd") == "on" else False
-
-        
-        if not confirmar or confirmar != senha:
-            flash("As senhas não coincidem.", "danger")
-            return render_template("register.html")
-        if not aceite_lgpd:
-            flash("É necessário aceitar os termos e a política de privacidade.", "warning")
-            return render_template("register.html")
+        aceiteLgpd = True if request.form.get("aceiteLgpd") == "on" else False
 
         try:
-            UsuarioService.create_user(nome, email, senha, papel, especialidade, aceite_lgpd=aceite_lgpd)
+            UsuarioService.registerUser(nome, email, senha, confirmar, papel, especialidade, aceiteLgpd=aceiteLgpd)
             flash("Usuário criado com sucesso!", "success")
             return redirect(url_for("auth.login"))
         except Exception as e:
-            flash(f"Erro ao criar usuário: {str(e)}", "danger")
+            flash(str(e), "danger")
 
     return render_template("register.html")
 
@@ -97,7 +89,7 @@ def perfil():
         flash("Você precisa estar logado para acessar o perfil.", "warning")
         return redirect(url_for("auth.login"))
 
-    user = UsuarioService.get_user_by_id(user_id)
+    user = UsuarioService.getUserById(user_id)
 
     if request.method == "POST":
         nome = request.form.get("nome")
@@ -105,7 +97,7 @@ def perfil():
         senha = request.form.get("senha")
         especialidade = request.form.get("especialidade")
 
-        UsuarioService.update_user(user_id, nome, email, senha, especialidade)
+        UsuarioService.updateUser(user_id, nome, email, senha, especialidade)
         flash("Perfil atualizado com sucesso!", "success")
         return redirect(url_for("auth.perfil"))
 
@@ -119,19 +111,16 @@ def excluir_conta():
         flash("Você precisa estar logado para excluir sua conta.", "warning")
         return redirect(url_for("auth.login"))
     senha_confirm = request.form.get("senha_confirmacao")
-    if not senha_confirm:
-        flash("É necessário informar a senha para confirmar a exclusão.", "warning")
+    try:
+        if not senha_confirm:
+            raise ValueError("É necessário informar a senha para confirmar a exclusão.")
+        UsuarioService.deleteAccountWithPassword(user_id, senha_confirm)
+        session.clear()
+        flash("Conta anonimizada com sucesso.", "success")
+        return redirect(url_for("auth.login"))
+    except Exception as e:
+        flash(str(e), "danger")
         return redirect(url_for("auth.perfil"))
-
-    user = UsuarioService.authenticate(UsuarioService.get_user_by_id(user_id).email, senha_confirm)
-    if not user:
-        flash("Senha incorreta.", "danger")
-        return redirect(url_for("auth.perfil"))
-
-    UsuarioService.anonimizar_usuario(user_id, anonimizado_por_id=user_id, motivo="Auto-exclusão pelo usuário")
-    session.clear()
-    flash("Conta anonimizada com sucesso.", "success")
-    return redirect(url_for("auth.login"))
 
 
 @auth_bp.route("/admin/anonimizar_usuario/<int:target_user_id>", methods=["POST"])
@@ -143,7 +132,7 @@ def admin_anonimizar_usuario(target_user_id):
 
     admin_id = session.get("user_id")
     try:
-        UsuarioService.anonimizar_usuario(target_user_id, anonimizado_por_id=admin_id, motivo="Anonimização por ADM")
+        UsuarioService.anonimizarUsuario(target_user_id, anonimizado_por_id=admin_id, motivo="Anonimização por ADM")
         flash("Usuário anonimizado com sucesso.", "success")
     except Exception as e:
         flash(f"Falha ao anonimizar usuário: {str(e)}", "danger")
@@ -173,7 +162,7 @@ def admin_list_usuarios():
     if date_filter:
         try:
             d = datetime.strptime(date_filter, '%Y-%m-%d')
-            query = query.filter(db.func.date(Usuario.criando_em) == d.date())
+            query = query.filter(db.func.date(Usuario.criadoEm) == d.date())
         except Exception:
             pass
 
@@ -190,11 +179,11 @@ def admin_view_usuario(uid):
     if session.get('papel') != 'adm':
         flash('Acesso negado.', 'danger')
         return redirect(url_for('auth.dashboard'))
-    u = Usuario.query.get(uid)
+    u = db.session.get(Usuario, uid)
     if not u:
         flash('Usuário não encontrado.', 'danger')
         return redirect(url_for('auth.admin_list_usuarios'))
-    evolucoes = Evolucao.query.filter_by(usuario_id=u.id).order_by(Evolucao.data_hora.desc()).all()
+    evolucoes = Evolucao.query.filter_by(usuarioId=u.id).order_by(Evolucao.dataHora.desc()).all()
     return render_template('admin/usuario_detalhes.html', usuario=u, evolucoes=evolucoes)
 
 
@@ -203,7 +192,7 @@ def admin_edit_usuario(uid):
     if session.get('papel') != 'adm':
         flash('Acesso negado.', 'danger')
         return redirect(url_for('auth.dashboard'))
-    u = Usuario.query.get(uid)
+    u = db.session.get(Usuario, uid)
     if not u:
         flash('Usuário não encontrado.', 'danger')
         return redirect(url_for('auth.admin_list_usuarios'))
@@ -213,12 +202,7 @@ def admin_edit_usuario(uid):
         papel = request.form.get('papel')
         especialidade = request.form.get('especialidade')
         try:
-            UsuarioService.update_user(u.id, nome, email, None, especialidade)
-            
-            u.papel = papel or u.papel
-            u.especialidade = especialidade or u.especialidade
-            from app import db
-            db.session.commit()
+            UsuarioService.updateUserAdmin(u.id, nome=nome, email=email, papel=papel, especialidade=especialidade)
             flash('Usuário atualizado.', 'success')
             return redirect(url_for('auth.admin_list_usuarios'))
         except Exception as e:

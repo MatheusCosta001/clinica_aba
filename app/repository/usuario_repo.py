@@ -3,14 +3,19 @@ from app.models.usuario import Usuario
 
 class UsuarioRepo:
     @staticmethod
-    def get_by_email(email):
-        return Usuario.query.filter_by(email=email).first()
+    def getByEmail(email):
+        if not email:
+            return None
+        return Usuario.query.filter_by(email=email.strip().lower()).first()
 
     @staticmethod
-    def get_by_id(uid):
-        return Usuario.query.get(uid)
+    def getById(uid):
+        if not uid:
+            return None
+        return db.session.get(Usuario, uid)
 
     @staticmethod
     def add(usuario):
         db.session.add(usuario)
         db.session.commit()
+        return usuario

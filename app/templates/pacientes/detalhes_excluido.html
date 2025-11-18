@@ -26,7 +26,7 @@
       </div>
       <div class="col-md-6 mb-3">
         <label class="form-label fw-bold">Data de Anonimização:</label>
-        <p>{% if paciente.anonimizado_em %}{{ paciente.anonimizado_em.strftime('%d/%m/%Y %H:%M') }}{% else %}<span class="text-muted">-</span>{% endif %}</p>
+        <p>{% if paciente.anonimizadoEm %}{{ paciente.anonimizadoEm.strftime('%d/%m/%Y %H:%M') }}{% else %}<span class="text-muted">-</span>{% endif %}</p>
       </div>
     </div>
   </div>
@@ -60,12 +60,12 @@
         <tbody>
           {% for e in evolucoes %}
           <tr>
-            <td>{{ e.data_hora.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>{{ e.dataHora.strftime('%d/%m/%Y %H:%M') }}</td>
             <td>
               {% if e.usuario.anonimizado %}
               <span class="anonymous-patient">Profissional Anônimo</span>
               {% else %}
-              {{ e.usuario.nome }} - {{ e.profissional_especialidade or 'N/A' }}
+              {{ e.usuario.nome }} - {{ e.profissionalEspecialidade or 'N/A' }}
               {% endif %}
             </td>
             <td><small>{{ e.anotacao[:100] }}...</small></td>

@@ -32,6 +32,6 @@ def create_app():
         from .services.usuario_service import UsuarioService
 
         if not Usuario.query.filter_by(email="admin@clinica.local").first():
-            UsuarioService.create_initial_admin()
+            UsuarioService.createInitialAdmin()
 
     return app

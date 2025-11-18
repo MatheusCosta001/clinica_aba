@@ -27,23 +27,23 @@ if __name__ == '__main__':
         engine = db.get_engine()
         
         try:
-            ensure_column(engine, 'usuarios', 'aceite_lgpd BOOLEAN DEFAULT FALSE')
-            ensure_column(engine, 'usuarios', 'aceite_lgpd_at TIMESTAMP')
+            ensure_column(engine, 'usuarios', 'aceiteLgpd BOOLEAN DEFAULT FALSE')
+            ensure_column(engine, 'usuarios', 'aceiteLgpdEm TIMESTAMP')
             ensure_column(engine, 'usuarios', 'anonimizado BOOLEAN DEFAULT FALSE')
-            ensure_column(engine, 'usuarios', 'anonimizado_em TIMESTAMP')
+            ensure_column(engine, 'usuarios', 'anonimizadoEm TIMESTAMP')
         except Exception as e:
             print('Erro ao aplicar alterações em usuarios:', e)
 
         
         try:
             ensure_column(engine, 'pacientes', 'anonimizado BOOLEAN DEFAULT FALSE')
-            ensure_column(engine, 'pacientes', 'anonimizado_em TIMESTAMP')
+            ensure_column(engine, 'pacientes', 'anonimizadoEm TIMESTAMP')
         except Exception as e:
             print('Erro ao aplicar alterações em pacientes:', e)
 
         
         try:
-            ensure_column(engine, 'evolucoes', 'profissional_especialidade VARCHAR(100)')
+            ensure_column(engine, 'evolucoes', 'profissionalEspecialidade VARCHAR(100)')
         except Exception as e:
             print('Erro ao aplicar alterações em evolucoes:', e)
 
@@ -56,9 +56,9 @@ if __name__ == '__main__':
                     conn.execute(text('''
                         CREATE TABLE relatorios (
                             id SERIAL PRIMARY KEY,
-                            paciente_id INTEGER NOT NULL,
-                            gerado_por_id INTEGER,
-                            gerado_em TIMESTAMP
+                            pacienteId INTEGER NOT NULL,
+                            geradoPorId INTEGER,
+                            geradoEm TIMESTAMP
                         )
                     '''))
         except Exception as e:
@@ -73,8 +73,8 @@ if __name__ == '__main__':
                     conn.execute(text('''
                         CREATE TABLE anonimizacao (
                             id SERIAL PRIMARY KEY,
-                            usuario_id INTEGER NOT NULL,
-                            quem_id INTEGER,
+                            usuarioId INTEGER NOT NULL,
+                            quemId INTEGER,
                             motivo VARCHAR(300),
                             "quando" TIMESTAMP
                         )

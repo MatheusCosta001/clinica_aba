@@ -27,8 +27,8 @@
             <span class="anonymous-patient">Paciente Anônimo (ID: {{ p.id }})</span>
           </td>
           <td>
-            {% if p.anonimizado_em %}
-            {{ p.anonimizado_em.strftime('%d/%m/%Y %H:%M') }}
+            {% if p.anonimizadoEm %}
+            {{ p.anonimizadoEm.strftime('%d/%m/%Y %H:%M') }}
             {% else %}
             <span class="text-muted">-</span>
             {% endif %}

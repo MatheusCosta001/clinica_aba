@@ -19,21 +19,21 @@ def index():
     Isso evita erro quando o usuário entra direto pela navbar.
     """
     
-    history = Relatorio.query.order_by(Relatorio.gerado_em.desc()).limit(50).all()
+    history = Relatorio.query.order_by(Relatorio.geradoEm.desc()).limit(50).all()
     return render_template("relatorios/gerar.html", paciente=None, history=history)
 
 @relatorios_bp.route("/<int:paciente_id>", methods=["GET", "POST"])
 @login_required
 def gerar(paciente_id):
-    paciente = PacienteService.get_paciente(paciente_id)
+    paciente = PacienteService.getPaciente(paciente_id)
     if not paciente:
         flash("Paciente não encontrado.", "danger")
         return redirect(url_for("relatorios.index"))
 
     if request.method == "POST":
         areas = request.form.getlist("areas")
-        data_inicio_str = request.form.get("data_inicio", "")
-        data_fim_str = request.form.get("data_fim", "")
+        data_inicio_str = request.form.get("dataInicio", "")
+        data_fim_str = request.form.get("dataFim", "")
         comentarios = request.form.get("comentarios", "").strip()
 
         
@@ -49,8 +49,8 @@ def gerar(paciente_id):
                 data_inicio = datetime.strptime(data_inicio_str, "%Y-%m-%d").date() if data_inicio_str else None
                 data_fim = datetime.strptime(data_fim_str, "%Y-%m-%d").date() if data_fim_str else None
                 todas = [e for e in todas if (
-                    (data_inicio is None or e.data_hora.date() >= data_inicio) and
-                    (data_fim is None or e.data_hora.date() <= data_fim)
+                    (data_inicio is None or e.dataHora.date() >= data_inicio) and
+                    (data_fim is None or e.dataHora.date() <= data_fim)
                 )]
             except Exception:
                 pass
@@ -80,11 +80,11 @@ def gerar(paciente_id):
             data_inicio = dt.strptime(data_inicio_str, "%Y-%m-%d").date() if data_inicio_str else None
             data_fim = dt.strptime(data_fim_str, "%Y-%m-%d").date() if data_fim_str else None
             r = Relatorio(
-                paciente_id=paciente.id,
-                gerado_por_id=session.get('user_id'),
-                gerado_em=datetime.now(ZoneInfo('America/Sao_Paulo')),
-                data_inicio=data_inicio,
-                data_fim=data_fim,
+                pacienteId=paciente.id,
+                geradoPorId=session.get('user_id'),
+                geradoEm=datetime.now(ZoneInfo('America/Sao_Paulo')),
+                dataInicio=data_inicio,
+                dataFim=data_fim,
                 comentarios=comentarios
             )
             db.session.add(r)

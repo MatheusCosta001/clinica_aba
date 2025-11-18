@@ -4,41 +4,71 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from app import db
 
+
 class PacienteService:
-    @staticmethod
-    def list_pacientes():
-        return PacienteRepo.list_all()
+    """Regras de negócio relacionadas a pacientes.
+
+    Mantemos métodos curtos e com responsabilidade única. Funções públicas
+    expõem operações claras (listar, buscar, salvar, deletar/anonimizar).
+    """
 
     @staticmethod
-    def list_excluidos():
-        from app.models.paciente import Paciente as Pac
-        return Pac.query.filter_by(anonimizado=True).order_by(Pac.nome).all()
+    def listPacientes():
+        return PacienteRepo.listAll()
 
     @staticmethod
-    def get_paciente(paciente_id):
-        return PacienteRepo.get_by_id(paciente_id)
+    def listExcluidos():
+        return Paciente.query.filter_by(anonimizado=True).order_by(Paciente.nome).all()
 
     @staticmethod
-    def create_or_update(data):
-        
+    def getPaciente(pacienteId):
+        if not pacienteId:
+            return None
+        return PacienteRepo.getById(pacienteId)
+
+    @staticmethod
+    def searchPacientes(queryText):
+        """Busca pacientes por nome, diagnóstico, cidade ou idade (quando for número)."""
+        q = (queryText or '').strip()
+        query = Paciente.query
+        if not q:
+            return query.order_by(Paciente.nome).all()
+        like_q = f"%{q}%"
+        try:
+            idadeSearch = int(q)
+            query = query.filter((Paciente.nome.ilike(like_q)) | (Paciente.diagnostico.ilike(like_q)) | (Paciente.cidade.ilike(like_q)) | (Paciente.idade == idadeSearch))
+        except ValueError:
+            query = query.filter((Paciente.nome.ilike(like_q)) | (Paciente.diagnostico.ilike(like_q)) | (Paciente.cidade.ilike(like_q)))
+        return query.order_by(Paciente.nome).all()
+
+    @staticmethod
+    def createOrUpdate(data):
+        """Cria ou atualiza um paciente. Validações básicas e commits centralizados."""
+        if not data or not data.get('nome'):
+            raise ValueError('O nome do paciente é obrigatório.')
+
         if data.get("id"):
-            p = PacienteRepo.get_by_id(data["id"])
+            p = PacienteRepo.getById(data["id"])
             if not p:
                 raise ValueError("Paciente não encontrado")
         else:
             p = Paciente()
-        p.nome = data.get("nome")
-       
-        dn = data.get("data_nascimento")
+
+        p.nome = data.get("nome").strip()
+
+        dn = data.get("dataNascimento")
         if dn:
             try:
-                p.data_nascimento = datetime.strptime(dn, "%Y-%m-%d").date()
-                
+                p.dataNascimento = datetime.strptime(dn, "%Y-%m-%d").date()
                 hoje = datetime.today().date()
-                p.idade = hoje.year - p.data_nascimento.year - ((hoje.month, hoje.day) < (p.data_nascimento.month, p.data_nascimento.day))
-            except:
-                p.data_nascimento = None
+                p.idade = hoje.year - p.dataNascimento.year - ((hoje.month, hoje.day) < (p.dataNascimento.month, p.dataNascimento.day))
+            except Exception:
+                p.dataNascimento = None
                 p.idade = None
+        else:
+            p.dataNascimento = None
+            p.idade = None
+
         p.diagnostico = data.get("diagnostico")
         p.responsavel = data.get("responsavel")
         p.cep = data.get("cep")
@@ -50,47 +80,37 @@ class PacienteService:
         if not data.get("id"):
             PacienteRepo.add(p)
         else:
-            db = __import__("app").app.db if False else None  
-            from app import db as _db
-            _db.session.commit()
+            db.session.commit()
         return p
 
     @staticmethod
-    def delete_paciente(paciente_id):
-        p = PacienteRepo.get_by_id(paciente_id)
-        if not p:
-            raise ValueError("Paciente não encontrado")
-        
-        p.nome = "Paciente Anônimo"
-        p.data_nascimento = None
-        p.idade = None
-        p.diagnostico = None
-        p.responsavel = None
-        p.cep = None
-        p.rua = None
-        p.bairro = None
-        p.cidade = None
-        p.uf = None
-        p.anonimizado = True
-        p.anonimizado_em = datetime.now(ZoneInfo("America/Sao_Paulo"))
+    def _anonymize_entity(paciente, motivo=None):
+        """Anonymiza os dados do paciente em memória e persiste a alteração."""
+        paciente.nome = "Paciente Anônimo"
+        paciente.dataNascimento = None
+        paciente.idade = None
+        paciente.diagnostico = None
+        paciente.responsavel = None
+        paciente.cep = None
+        paciente.rua = None
+        paciente.bairro = None
+        paciente.cidade = None
+        paciente.uf = None
+        paciente.anonimizado = True
+        paciente.anonimizadoEm = datetime.now(ZoneInfo("America/Sao_Paulo"))
         db.session.commit()
+        return paciente
 
     @staticmethod
-    def anonimizar_paciente(paciente_id, motivo=None):
-        p = PacienteRepo.get_by_id(paciente_id)
+    def deletePaciente(pacienteId):
+        p = PacienteRepo.getById(pacienteId)
         if not p:
             raise ValueError("Paciente não encontrado")
-        p.nome = "Paciente Anônimo"
-        p.data_nascimento = None
-        p.idade = None
-        p.diagnostico = None
-        p.responsavel = None
-        p.cep = None
-        p.rua = None
-        p.bairro = None
-        p.cidade = None
-        p.uf = None
-        p.anonimizado = True
-        p.anonimizado_em = datetime.now(ZoneInfo("America/Sao_Paulo"))
-        db.session.commit()
-        return p
+        return PacienteService._anonymize_entity(p, motivo="Remoção")
+
+    @staticmethod
+    def anonimizarPaciente(pacienteId, motivo=None):
+        p = PacienteRepo.getById(pacienteId)
+        if not p:
+            raise ValueError("Paciente não encontrado")
+        return PacienteService._anonymize_entity(p, motivo=motivo)

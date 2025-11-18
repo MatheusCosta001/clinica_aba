@@ -13,7 +13,7 @@ evolucoes_bp = Blueprint("evolucoes", __name__, url_prefix="/evolucoes")
 def index():
     """Lista os pacientes disponíveis para selecionar e ver as evoluções."""
     q = request.args.get('q', '').strip().lower()
-    pacientes = PacienteService.list_pacientes()
+    pacientes = PacienteService.listPacientes()
     if q:
         pacientes = [p for p in pacientes if q in (p.nome or '').lower() or q in (p.diagnostico or '').lower()]
 
@@ -26,31 +26,16 @@ def index():
 @evolucoes_bp.route("/paciente/<int:paciente_id>")
 @login_required
 def timeline(paciente_id):
-    paciente = PacienteService.get_paciente(paciente_id)
+    paciente = PacienteService.getPaciente(paciente_id)
     if not paciente:
         flash("Paciente não encontrado.", "danger")
         return redirect(url_for("evolucoes.index"))
 
-    evolucoes = EvolucaoService.list_by_paciente(paciente_id)
-
-    
-    especialidade_filter = request.args.get('especialidade_filter', '').strip().lower()
+    especialidade_filter = request.args.get('especialidade_filter', '').strip()
     data_filter = request.args.get('data_filter', '')
-    q = request.args.get('q', '').strip().lower()
+    q = request.args.get('q', '').strip()
 
-    if especialidade_filter:
-        evolucoes = [e for e in evolucoes if especialidade_filter in (e.profissional_especialidade or '').lower()]
-
-    if data_filter:
-        from datetime import datetime
-        try:
-            target_date = datetime.strptime(data_filter, '%Y-%m-%d').date()
-            evolucoes = [e for e in evolucoes if e.data_hora.date() == target_date]
-        except ValueError:
-            pass
-
-    if q:
-        evolucoes = [e for e in evolucoes if q in (e.anotacao or '').lower() or q in ((e.usuario.nome or '').lower())]
+    evolucoes = EvolucaoService.listByPacienteWithFilters(paciente_id, especialidadeFilter=especialidade_filter, dateFilter=data_filter, q=q)
 
     
     especialidades = [e[0] for e in Usuario.query.with_entities(Usuario.especialidade).filter(Usuario.especialidade != None).distinct().all()]
@@ -72,7 +57,7 @@ def novo(paciente_id):
         area = request.form.get("area")
 
         try:
-            EvolucaoService.create_evolucao(paciente_id, session.get("user_id"), anotacao, area)
+            EvolucaoService.createEvolucao(paciente_id, session.get("user_id"), anotacao, area)
             flash("Evolução registrada com sucesso.", "success")
             return redirect(url_for("evolucoes.timeline", paciente_id=paciente_id))
         except Exception as e:

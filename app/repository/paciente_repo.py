@@ -3,17 +3,20 @@ from app.models.paciente import Paciente
 
 class PacienteRepo:
     @staticmethod
-    def list_all():
+    def listAll():
         return Paciente.query.order_by(Paciente.nome).all()
 
     @staticmethod
-    def get_by_id(pid):
-        return Paciente.query.get(pid)
+    def getById(pid):
+        if not pid:
+            return None
+        return db.session.get(Paciente, pid)
 
     @staticmethod
     def add(paciente):
         db.session.add(paciente)
         db.session.commit()
+        return paciente
 
     @staticmethod
     def delete(paciente):

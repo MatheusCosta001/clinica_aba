@@ -3,7 +3,9 @@ def test_register_user(client):
         "nome": "Usuário Teste",
         "email": "teste@example.com",
         "senha": "1234",
-        "confirmar_senha": "1234"
+        "confirmar_senha": "1234",
+        "papel": "profissional",
+        "aceiteLgpd": "on"
     }, follow_redirects=True)
 
 
@@ -18,7 +20,9 @@ def test_login_user(client):
         "nome": "Maria",
         "email": "maria@example.com",
         "senha": "1234",
-        "confirmar_senha": "1234"
+        "confirmar_senha": "1234",
+        "papel": "profissional",
+        "aceiteLgpd": "on"
     })
     
     

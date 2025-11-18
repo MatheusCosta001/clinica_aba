@@ -11,24 +11,21 @@ class UsuarioService:
     """Serviço responsável pelas regras de negócio relacionadas a usuários."""
 
     @staticmethod
-    def create_initial_admin():
+    def createInitialAdmin():
         """Cria o usuário admin padrão caso ainda não exista."""
         admin_email = "admin@clinica.local"
-        admin_existente = UsuarioRepo.get_by_email(admin_email)
-
+        admin_existente = UsuarioRepo.getByEmail(admin_email)
         if not admin_existente:
-            senha_hash = generate_password_hash("admin123")
+            senhaHash = generate_password_hash("admin123")
             admin = Usuario(
                 nome="Admin",
-                email=admin_email,
-                senha_hash=senha_hash,
+                email=admin_email.strip().lower(),
+                senhaHash=senhaHash,
                 papel="adm",
                 especialidade=None
             )
-            db.session.add(admin)
-            db.session.commit()
-            return admin
-        return None
+            return UsuarioRepo.add(admin)
+        return admin_existente
 
     @staticmethod
     def authenticate(email, senha):
@@ -39,13 +36,13 @@ class UsuarioService:
         if not email or not senha:
             return None
 
-        usuario = UsuarioRepo.get_by_email(email)
-        if usuario and check_password_hash(usuario.senha_hash, senha):
+        usuario = UsuarioRepo.getByEmail(email)
+        if usuario and check_password_hash(usuario.senhaHash, senha):
             return usuario
         return None
 
     @staticmethod
-    def create_user(nome, email, senha, papel, especialidade=None, aceite_lgpd=False):
+    def createUser(nome, email, senha, papel, especialidade=None, aceiteLgpd=False):
         """
         Cria um novo usuário no sistema.
         - Verifica se o e-mail já existe.
@@ -55,39 +52,60 @@ class UsuarioService:
         if not nome or not email or not senha or not papel:
             raise ValueError("Todos os campos obrigatórios devem ser preenchidos.")
 
-        if UsuarioRepo.get_by_email(email):
+        if UsuarioRepo.getByEmail(email):
             raise ValueError("E-mail já cadastrado.")
 
-        senha_hash = generate_password_hash(senha)
+        senhaHash = generate_password_hash(senha)
         novo_usuario = Usuario(
             nome=nome.strip(),
             email=email.strip().lower(),
-            senha_hash=senha_hash,
+            senhaHash=senhaHash,
             papel=papel.strip(),
             especialidade=especialidade.strip() if especialidade else None,
-            aceite_lgpd=bool(aceite_lgpd),
-            aceite_lgpd_at=(datetime.now(ZoneInfo("America/Sao_Paulo")) if aceite_lgpd else None)
+            aceiteLgpd=bool(aceiteLgpd),
+            aceiteLgpdEm=(datetime.now(ZoneInfo("America/Sao_Paulo")) if aceiteLgpd else None)
         )
 
-        UsuarioRepo.add(novo_usuario)
-        return novo_usuario
+        return UsuarioRepo.add(novo_usuario)
 
     @staticmethod
-    def get_by_id(user_id):
+    def registerUser(nome, email, senha, confirmarSenha, papel, especialidade=None, aceiteLgpd=False):
+        """Valida os dados de registro (senhas iguais, aceite LGPD) e cria o usuário."""
+        if not confirmarSenha or confirmarSenha != senha:
+            raise ValueError("As senhas não coincidem.")
+        if not aceiteLgpd:
+            raise ValueError("É necessário aceitar os termos e a política de privacidade.")
+        return UsuarioService.createUser(nome, email, senha, papel, especialidade, aceiteLgpd=aceiteLgpd)
+
+    @staticmethod
+    def deleteAccountWithPassword(userId, senhaConfirm):
+        """Autentica o usuário com a senha informada e anonimiza a conta se válida."""
+        user = UsuarioRepo.getById(userId)
+        if not user:
+            raise ValueError("Usuário não encontrado.")
+
+        authenticated = UsuarioService.authenticate(user.email, senhaConfirm)
+        if not authenticated:
+            raise ValueError("Senha incorreta.")
+        UsuarioService.anonimizarUsuario(userId, anonimizado_por_id=userId, motivo="Auto-exclusão pelo usuário")
+        return True
+
+    @staticmethod
+    def getById(userId):
         """Retorna um usuário pelo ID, ou None se não existir."""
-        if not user_id:
+        if not userId:
             return None
-        return UsuarioRepo.get_by_id(user_id)
+        return UsuarioRepo.getById(userId)
 
     @staticmethod
-    def get_user_by_id(user_id):
-        """Alias de get_by_id, para compatibilidade com outros módulos."""
-        return UsuarioService.get_by_id(user_id)
+    def getUserById(userId):
+        """Alias de getById, para compatibilidade com outros módulos."""
+        return UsuarioService.getById(userId)
 
     @staticmethod
-    def update_user(user_id, nome, email, senha=None, especialidade=None):
+    def updateUser(userId, nome, email, senha=None, especialidade=None):
         """Atualiza as informações de um usuário existente."""
-        usuario = UsuarioRepo.get_by_id(user_id)
+        usuario = UsuarioRepo.getById(userId)
         if not usuario:
             raise ValueError("Usuário não encontrado.")
 
@@ -96,26 +114,44 @@ class UsuarioService:
         if email:
             usuario.email = email.strip().lower()
         if senha:
-            usuario.senha_hash = generate_password_hash(senha)
+            usuario.senhaHash = generate_password_hash(senha)
         if especialidade is not None:
             usuario.especialidade = especialidade.strip() if especialidade else None
 
         db.session.commit()
         return usuario
 
+    @staticmethod
+    def updateUserAdmin(userId, nome=None, email=None, papel=None, especialidade=None):
+        """Atualiza um usuário com permissões de administrador (inclui mudança de papel)."""
+        usuario = UsuarioRepo.getById(userId)
+        if not usuario:
+            raise ValueError("Usuário não encontrado.")
+        if nome:
+            usuario.nome = nome.strip()
+        if email:
+            usuario.email = email.strip().lower()
+        if papel:
+            usuario.papel = papel
+        if especialidade is not None:
+            usuario.especialidade = especialidade.strip() if especialidade else None
+        db.session.commit()
+        return usuario
+
 
     @staticmethod
-    def delete_user(user_id):
+    def deleteUser(userId):
         """Exclui um usuário existente."""
-        user = UsuarioRepo.get_by_id(user_id)
+        user = UsuarioRepo.getById(userId)
         if not user:
             raise ValueError("Usuário não encontrado.")
         
-        UsuarioService.anonimizar_usuario(user_id, anonimizado_por_id=user_id, motivo="Exclusão solicitada")
+        UsuarioService.anonimizarUsuario(userId, anonimizado_por_id=userId, motivo="Exclusão solicitada")
+        return True
 
     @staticmethod
-    def anonimizar_usuario(user_id, anonimizado_por_id=None, motivo="Solicitação"):
-        user = UsuarioRepo.get_by_id(user_id)
+    def anonimizarUsuario(userId, anonimizado_por_id=None, motivo="Solicitação"):
+        user = UsuarioRepo.getById(userId)
         if not user:
             raise ValueError("Usuário não encontrado.")
 
@@ -130,16 +166,17 @@ class UsuarioService:
             user.email = None
         else:
             user.email = f"deleted_{user.id}@anon.local"
-        user.senha_hash = None
+        user.senhaHash = None
         user.especialidade = None
-        user.aceite_lgpd = False
-        user.aceite_lgpd_at = None
+        user.aceiteLgpd = False
+        user.aceiteLgpdEm = None
         user.anonimizado = True
-        user.anonimizado_em = datetime.now(ZoneInfo("America/Sao_Paulo"))
+        user.anonimizadoEm = datetime.now(ZoneInfo("America/Sao_Paulo"))
 
         
+
         try:
-            log = AnonimizacaoLog(usuario_id=user.id, quem_id=anonimizado_por_id, motivo=motivo)
+            log = AnonimizacaoLog(usuarioId=user.id, quemId=anonimizado_por_id, motivo=motivo)
             db.session.add(log)
             db.session.commit()
         except Exception:

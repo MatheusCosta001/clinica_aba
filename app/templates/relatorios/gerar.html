@@ -21,7 +21,7 @@
         <tr>
           <td>{{ r.paciente.nome if r.paciente else '-' }}</td>
           <td>{% if r.gerador and not r.gerador.anonimizado %}{{ r.gerador.nome }}{% else %}Usuário Anônimo{% endif %}</td>
-          <td>{{ r.gerado_em }}</td>
+          <td>{{ r.geradoEm }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -44,13 +44,13 @@
         <label class="form-label fw-semibold">Período do Relatório</label>
         <p class="text-muted mb-2">(Opcional - deixe em branco para incluir todas as datas)</p>
         <div class="row">
-          <div class="col-md-6">
+            <div class="col-md-6">
             <label class="form-label">Data de Início</label>
-            <input type="date" name="data_inicio" class="form-control">
+            <input type="date" name="dataInicio" class="form-control">
           </div>
           <div class="col-md-6">
             <label class="form-label">Data de Término</label>
-            <input type="date" name="data_fim" class="form-control">
+            <input type="date" name="dataFim" class="form-control">
           </div>
         </div>
       </div>

@@ -207,7 +207,7 @@ def gerar_relatorio_pdf(paciente, evolucoes, gerador_nome, comentarios="", user_
     flow.append(Paragraph("<b>Dados do Paciente:</b>", heading_style))
     patient_data = [
         f"<b>Nome:</b> {paciente.nome}",
-        f"<b>Data de Nascimento:</b> {paciente.data_nascimento or 'Não informada'}",
+        f"<b>Data de Nascimento:</b> {paciente.dataNascimento or 'Não informada'}",
         f"<b>Idade:</b> {paciente.idade or 'Não informada'}",
         f"<b>Diagnóstico:</b> {paciente.diagnostico or 'Não informado'}",
         f"<b>Responsável:</b> {paciente.responsavel or 'Não informado'}",
@@ -223,7 +223,7 @@ def gerar_relatorio_pdf(paciente, evolucoes, gerador_nome, comentarios="", user_
         flow.append(Paragraph("<b>Evoluções Clínicas:</b>", heading_style))
         
         for e in evolucoes:
-            dt = e.data_hora
+            dt = e.dataHora
             try:
                 dt = dt.astimezone(ZoneInfo('America/Sao_Paulo'))
             except Exception:
@@ -232,7 +232,7 @@ def gerar_relatorio_pdf(paciente, evolucoes, gerador_nome, comentarios="", user_
             usuario = getattr(e, 'usuario', None)
             nome = getattr(usuario, 'nome', '---') if usuario else '---'
             papel = getattr(usuario, 'papel', None) if usuario else None
-            especialidade = e.profissional_especialidade or (getattr(usuario, 'especialidade', None) if usuario else None)
+            especialidade = e.profissionalEspecialidade or (getattr(usuario, 'especialidade', None) if usuario else None)
             
             if papel == 'adm':
                 papel_label = 'ADM'

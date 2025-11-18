@@ -39,7 +39,7 @@
     <div>
       <h2 class="fw-bold text-primary mb-2">Evoluções de {% if paciente.anonimizado %}<span class="anonymous-patient">Paciente Anônimo</span>{% else %}{{ paciente.nome }}{% endif %}</h2>
       {% if paciente.anonimizado %}
-      <small class="text-muted">Este paciente foi anonimizado em conformidade com a LGPD em {{ paciente.anonimizado_em.strftime('%d/%m/%Y') if paciente.anonimizado_em else 'data desconhecida' }}</small>
+      <small class="text-muted">Este paciente foi anonimizado em conformidade com a LGPD em {{ paciente.anonimizadoEm.strftime('%d/%m/%Y') if paciente.anonimizadoEm else 'data desconhecida' }}</small>
       {% endif %}
     </div>
     <div>
@@ -88,11 +88,11 @@
       {% for e in evolucoes %}
       <div class="timeline-item">
         <div class="timeline-header">
-          <div class="timeline-date">{{ e.data_hora.strftime('%d/%m %H:%M') }}</div>
+          <div class="timeline-date">{{ e.dataHora.strftime('%d/%m %H:%M') }}</div>
           <div class="timeline-user">{% if e.usuario.anonimizado %}<span class="anonymous-patient">Profissional Anônimo</span>{% else %}{{ e.usuario.nome }}{% endif %}</div>
-          {% if e.profissional_especialidade %}
+          {% if e.profissionalEspecialidade %}
           <span class="role-badge {% if e.usuario and e.usuario.papel == 'adm' %}adm{% elif e.usuario and e.usuario.papel == 'coordenador' %}coordenador{% else %}profissional{% endif %}">
-            {{ e.profissional_especialidade.replace('_',' ')|title }}
+            {{ e.profissionalEspecialidade.replace('_',' ')|title }}
           </span>
           {% endif %}
           {% if session.get('papel') in ('adm', 'coordenador') %}
