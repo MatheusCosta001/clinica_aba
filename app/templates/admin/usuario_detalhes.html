@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Usuário - Detalhes{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Detalhes do Usuário</h2>
+  <div class="card p-4 mb-4">
+    <div data-user-id="{{ usuario.id }}">
+      <p><strong>ID:</strong> {{ usuario.id }}</p>
+      <p class="user-sensitive"><strong>Nome:</strong> {{ usuario.nome }}</p>
+      <p class="user-sensitive"><strong>Email:</strong> {{ usuario.email or '-' }}</p>
+      <p><strong>Papel:</strong> {{ usuario.papel }}</p>
+      <p class="user-sensitive"><strong>Especialidade:</strong> {{ usuario.especialidade or '-' }}</p>
+      <p><strong>Anonimizado:</strong> {{ 'Sim' if usuario.anonimizado else 'Não' }}</p>
+    </div>
+    <div class="mt-3">
+      <a href="{{ url_for('auth.admin_list_usuarios') }}" class="btn btn-secondary">Voltar</a>
+      {% if not usuario.anonimizado %}
+      <form method="POST" action="{{ url_for('auth.admin_anonimizar_usuario', target_user_id=usuario.id) }}" style="display:inline">
+        <button class="btn btn-anonymize" onclick="return confirm('Confirmar anonimização do usuário?')">Anonimizar</button>
+      </form>
+      <a href="{{ url_for('auth.admin_edit_usuario', uid=usuario.id) }}" class="btn btn-primary ms-2">Editar</a>
+      {% else %}
+      <button class="btn btn-danger btn-perm-remove-user ms-2" data-uid="{{ usuario.id }}">Excluir permanentemente</button>
+      {% endif %}
+    </div>
+  </div>
+
+  <h4>Evoluções registradas por este usuário</h4>
+  <div class="card p-3">
+    {% if evolucoes %}
+      <ul class="list-group list-group-flush">
+        {% for e in evolucoes %}
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold">{{ usuario.nome }} {% if e.profissionalEspecialidade %} - <small>{{ e.profissionalEspecialidade }}</small>{% endif %}</div>
+              <small class="text-muted">{{ e.dataHora.strftime('%d/%m/%Y %H:%M') }}</small>
+              <p class="mt-2 mb-0">{{ e.anotacao }}</p>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-muted mb-0">Nenhuma evolução encontrada.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

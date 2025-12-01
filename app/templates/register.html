@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Registrar - Clínica ABA{% endblock %}
+
+{% block content %}
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
+  <div class="row w-100 shadow-lg rounded-4 overflow-hidden" style="max-width: 960px;">
+    
+    <div class="col-md-6 bg-white p-5 d-flex flex-column justify-content-center">
+      <h3 class="mb-3 text-primary fw-semibold">Criar nova conta</h3>
+      <p class="text-muted mb-4">Preencha os campos abaixo para cadastrar um novo usuário.</p>
+
+      <form method="POST" action="{{ url_for('auth.register') }}">
+
+        <div class="mb-3">
+          <label for="nome" class="form-label">Nome completo</label>
+          <input type="text" id="nome" name="nome" class="form-control form-control-lg" placeholder="Ex: Ana Silva" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input type="email" id="email" name="email" class="form-control form-control-lg" placeholder="seuemail@exemplo.com" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha</label>
+          <input type="password" id="senha" name="senha" class="form-control form-control-lg" placeholder="••••••••" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="confirmar_senha" class="form-label">Confirmar senha</label>
+          <input type="password" id="confirmar_senha" name="confirmar_senha" class="form-control form-control-lg" placeholder="Repita a senha" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label d-block mb-2">Papel</label>
+          <div class="d-flex gap-3 flex-wrap">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="papel" id="papelProfissional" value="profissional" required>
+              <label class="form-check-label" for="papelProfissional">Profissional</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="papel" id="papelCoordenador" value="coordenador">
+              <label class="form-check-label" for="papelCoordenador">Coordenador</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="papel" id="papelAdm" value="adm">
+              <label class="form-check-label" for="papelAdm">Admin</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4" id="especialidade_block" style="display:none;">
+          <label for="especialidade" class="form-label">Especialidade (apenas para Profissionais)</label>
+          <select id="especialidade" name="especialidade" class="form-control">
+            <option value="">-- Nenhuma --</option>
+            <option value="psicologo">Psicólogo</option>
+            <option value="fonoaudiologo">Fonoaudiólogo</option>
+            <option value="terapeuta_ocupacional">Terapeuta Ocupacional</option>
+            <option value="psicomotricista">Psicomotricista</option>
+            <option value="psicopedagogo">Psicopedagogo</option>
+            <option value="aplicador_aba">Aplicador ABA</option>
+          </select>
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" value="on" id="aceiteLgpd" name="aceiteLgpd" required>
+          <label class="form-check-label" for="aceiteLgpd">
+            Li e aceito os <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Termos de Uso e Política de Privacidade</a>
+          </label>
+        </div>
+
+        
+        <div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Termos de Uso e Política de Privacidade</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+              </div>
+
+              <div class="modal-body">
+                <p>Ao utilizar este sistema, você concorda com o tratamento de dados pessoais conforme descrito nesta política. Os dados são usados apenas para fins clínicos e administrativos. O acesso a informações sensíveis é restrito aos profissionais autorizados.</p>
+                <p>Os titulares podem solicitar acesso, correção ou anonimização de seus dados. A anonimização remove informações pessoais, preservando registros clínicos essenciais.</p>
+                <p>Para mais informações, leia a política completa na página dedicada.</p>
+              </div>
+
+              
+              <div class="modal-footer d-flex justify-content-between">
+                <a href="{{ url_for('auth.lgpd') }}" class="btn btn-outline-primary">
+                  Ver termo completo
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+              </div>
+              
+
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Cadastrar</button>
+      </form>
+
+      <div class="text-center mt-3">
+        <small class="text-muted">Já possui conta? 
+          <a href="{{ url_for('auth.login') }}" class="text-primary fw-semibold text-decoration-none">Entrar</a>
+        </small>
+      </div>
+    </div>
+
+    <div class="col-md-6 d-flex align-items-center justify-content-center bg-light" 
+         style="background: linear-gradient(135deg, #e6f0ff 0%, #ffffff 100%);">
+      <img src="{{ url_for('static', filename='img/autismo.png') }}" 
+           alt="Clínica ABA" 
+           class="img-fluid"
+           style="width: 100%; height: auto; object-fit: cover; max-height: 100%;">
+    </div>
+  </div>
+</div>
+
+<script>
+  
+  document.addEventListener('DOMContentLoaded', function(){
+    const radios = document.querySelectorAll('input[name="papel"]');
+    const espBlock = document.getElementById('especialidade_block');
+    function update(){
+      const sel = document.querySelector('input[name="papel"]:checked');
+      if(sel && sel.value === 'profissional'){
+        espBlock.style.display = 'block';
+      } else {
+        espBlock.style.display = 'none';
+      }
+    }
+    radios.forEach(r => r.addEventListener('change', update));
+    update();
+  });
+</script>
+
+{% endblock %}

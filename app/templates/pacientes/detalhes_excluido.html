@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Detalhes de Paciente Anonimizado{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold text-primary mb-4">Detalhes do Paciente Anonimizado</h2>
+
+  <div class="lgpd-info">
+    <strong>⚖️ Aviso de Privacidade:</strong> Este paciente foi anonimizado. Os dados pessoais abaixo foram removidos ou substituídos por valores genéricos em conformidade com a LGPD.
+  </div>
+
+  <div class="card p-4 mb-4">
+    <h4 class="mb-3">Informações Clínicas (Preservadas)</h4>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label fw-bold">ID do Registro:</label>
+        <p>{{ paciente.id }}</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label fw-bold">Status:</label>
+        <p><span class="patient-inactive-badge">ANONIMIZADO</span></p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label fw-bold">Diagnóstico Clínico:</label>
+        <p>{% if paciente.diagnostico %}{{ paciente.diagnostico }}{% else %}Não registrado{% endif %}</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label fw-bold">Data de Anonimização:</label>
+        <p>{% if paciente.anonimizadoEm %}{{ paciente.anonimizadoEm.strftime('%d/%m/%Y %H:%M') }}{% else %}<span class="text-muted">-</span>{% endif %}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-4 mb-4">
+    <h4 class="mb-3">Dados Pessoais (Anonimizados)</h4>
+    <div class="alert alert-warning mb-0">
+      <strong>Informação:</strong> Os seguintes dados foram removidos ou substituídos:
+      <ul class="mt-2 mb-0">
+        <li><strong>Nome:</strong> <span class="anonymous-patient">Paciente Anônimo</span></li>
+        <li><strong>Data de Nascimento:</strong> <span class="text-muted">Removida</span></li>
+        <li><strong>Responsável:</strong> <span class="text-muted">Removido</span></li>
+        <li><strong>Endereço (Rua, Bairro, Cidade, UF):</strong> <span class="text-muted">Removido</span></li>
+        <li><strong>CEP:</strong> <span class="text-muted">Removido</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card p-4 mb-4">
+    <h4 class="mb-3">Evoluções Clínicas Associadas</h4>
+    {% if evolucoes %}
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Profissional</th>
+            <th>Anotação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in evolucoes %}
+          <tr>
+            <td>{{ e.dataHora.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+              {% if e.usuario.anonimizado %}
+              <span class="anonymous-patient">Profissional Anônimo</span>
+              {% else %}
+              {{ e.usuario.nome }} - {{ e.profissionalEspecialidade or 'N/A' }}
+              {% endif %}
+            </td>
+            <td><small>{{ e.anotacao[:100] }}...</small></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-muted">Nenhuma evolução clínica registrada para este paciente.</p>
+    {% endif %}
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <a href="{{ url_for('pacientes.excluidos') }}" class="btn btn-outline-secondary">← Voltar</a>
+  </div>
+</div>
+{% endblock %}

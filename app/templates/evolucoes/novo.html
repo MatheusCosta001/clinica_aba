@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Nova Evolução - {{ paciente.nome }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary">Nova Anotação — {{ paciente.nome }}</h2>
+    <a class="btn btn-outline-secondary px-3" href="{{ url_for('evolucoes.timeline', paciente_id=paciente.id) }}">← Voltar</a>
+  </div>
+
+  <div class="card shadow-sm p-4">
+    <form method="post" id="novo-evolucao-form" data-paciente-id="{{ paciente.id }}" data-paciente-anon="{{ '1' if paciente.anonimizado else '0' }}">
+
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Anotação</label>
+        <textarea name="anotacao" class="form-control" rows="7" placeholder="Digite aqui as observações..." required></textarea>
+        <small class="text-muted">Para proteger a privacidade e cumprir a LGPD, evite incluir nesta anotação quaisquer dados pessoais ou sensíveis seus ou do paciente.</small>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary px-4 me-2">Salvar</button>
+        <a class="btn btn-secondary px-4" href="{{ url_for('evolucoes.timeline', paciente_id=paciente.id) }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('novo-evolucao-form');
+      if(!form) return;
+      const isAnon = form.getAttribute('data-paciente-anon') === '1';
+      if(isAnon) {
+        
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          alert('Não é possível criar nova anotação para paciente inativo.');
+        });
+      }
+    });
+  </script>
+
+</div>
+{% endblock %}
