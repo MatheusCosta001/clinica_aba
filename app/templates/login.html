@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Login - Clínica ABA{% endblock %}
+
+{% block content %}
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
+  <div class="row w-100 shadow-lg rounded-4 overflow-hidden" style="max-width: 1080px;">
+
+    <div class="col-md-6 bg-white p-5 d-flex flex-column justify-content-center">
+      <h3 class="mb-3 text-primary fw-semibold">Bem-vindo(a)</h3>
+      <p class="text-muted mb-4">Entre com sua conta para acessar o sistema</p>
+
+      <form method="POST" action="{{ url_for('auth.login') }}">
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input id="email" name="email" type="email" class="form-control form-control-lg" placeholder="seuemail@exemplo.com" required>
+        </div>
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha</label>
+          <div class="input-group">
+            <input id="senha" name="senha" type="password" class="form-control form-control-lg" placeholder="••••••••" required>
+            <button class="btn btn-outline-secondary" type="button" tabindex="-1" data-toggle="toggle-password" data-target="#senha">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5C7 5 2.73 8.11 1 12c1.73 3.89 6 7 11 7s9.27-3.11 11-7c-1.73-3.89-6-7-11-7z" stroke="#333" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="#333" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#forgotModal">Esqueci a senha</a>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Entrar</button>
+      </form>
+
+      <div class="modal fade" id="forgotModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Recuperar senha</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form id="forgotForm" method="POST" action="{{ url_for('auth.esqueci_senha') }}">
+              <div class="modal-body">
+                <p>Informe o e-mail cadastrado para receber o link de recuperação.</p>
+                <div class="mb-3">
+                  <label for="forgot_email" class="form-label">E-mail</label>
+                  <input id="forgot_email" name="email" type="email" class="form-control" placeholder="seuemail@exemplo.com" required>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-primary">Enviar link</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <small class="text-muted">Não tem conta?
+          <a href="{{ url_for('auth.register') }}" class="text-primary fw-semibold text-decoration-none">Cadastre-se</a>
+        </small>
+      </div>
+    </div>
+
+    <div class="col-md-6 d-flex align-items-center justify-content-center p-0"
+         style="background: linear-gradient(135deg, #e6f0ff 0%, #ffffff 100%); overflow: hidden;">
+      <img src="{{ url_for('static', filename='img/autismo.png') }}"
+           alt="Clínica ABA"
+           class="img-fluid"
+           style="width: 100%; height: auto; object-fit: cover; aspect-ratio: 3 / 2;">
+    </div>
+  </div>
+</div>
+{% endblock %}

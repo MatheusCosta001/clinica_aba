@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ambientes virtuais
+venv/
+env/
+
+# SQLite DBs 
+*.sqlite3
+
+# Pasta de instância do Flask
+instance/
+
+# Migrações 
+migrations/
+
+# IDEs
+.vscode/
+.idea/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Variáveis de ambiente
+.env
+
+# Testes 
+.coverage
+htmlcov/
+.cache/
+pytest_cache/
+
+# Logs e arquivos temporários
+*.log
+*.pdf
+
+# Scripts opcionais/backups
+scripts/*.bak
+scripts/*.pyc
